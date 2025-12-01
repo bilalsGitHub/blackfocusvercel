@@ -1,0 +1,163 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2024-01-15T10:30:00.000Z",
+  "user": {
+    "email": "test@example.com",
+    "name": "Test User"
+  },
+  "timer": {
+    "sessions": [
+      {
+        "id": "1704960000000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-01-15T09:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1704962100000-0.456",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-01-15T09:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1704962700000-0.789",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-01-15T10:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1704964800000-0.234",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-01-15T10:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1704966900000-0.567",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-01-15T11:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1704968400000-0.891",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-01-15T14:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1704970500000-0.345",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-01-15T15:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1704972600000-0.678",
+        "mode": "longBreak",
+        "duration": 900,
+        "completedAt": "2024-01-15T16:00:00.000Z",
+        "wasCompleted": true
+      }
+    ],
+    "completedSessions": 5,
+    "durations": {
+      "focus": 1500,
+      "shortBreak": 300,
+      "longBreak": 900
+    }
+  },
+  "tasks": {
+    "tasks": [
+      {
+        "id": "task-1704960000000-0.123",
+        "title": "Write project documentation",
+        "description": "Complete API documentation and user guide",
+        "estimatedPomodoros": 4,
+        "completedPomodoros": 3,
+        "isActive": true,
+        "isCompleted": false,
+        "priority": "high",
+        "createdAt": "2024-01-15T08:00:00.000Z",
+        "order": 0
+      },
+      {
+        "id": "task-1704962000000-0.456",
+        "title": "Review pull requests",
+        "description": "",
+        "estimatedPomodoros": 2,
+        "completedPomodoros": 2,
+        "isActive": false,
+        "isCompleted": true,
+        "priority": "medium",
+        "createdAt": "2024-01-15T08:30:00.000Z",
+        "completedAt": "2024-01-15T10:00:00.000Z",
+        "order": 1
+      },
+      {
+        "id": "task-1704964000000-0.789",
+        "title": "Fix bug #342",
+        "description": "Memory leak in timer component",
+        "estimatedPomodoros": 3,
+        "completedPomodoros": 0,
+        "isActive": false,
+        "isCompleted": false,
+        "priority": "high",
+        "createdAt": "2024-01-15T09:00:00.000Z",
+        "order": 2
+      },
+      {
+        "id": "task-1704966000000-0.234",
+        "title": "Team meeting preparation",
+        "description": "Prepare slides for quarterly review",
+        "estimatedPomodoros": 2,
+        "completedPomodoros": 0,
+        "isActive": false,
+        "isCompleted": false,
+        "priority": "medium",
+        "createdAt": "2024-01-15T09:30:00.000Z",
+        "order": 3
+      },
+      {
+        "id": "task-1704968000000-0.567",
+        "title": "Update dependencies",
+        "description": "",
+        "estimatedPomodoros": 1,
+        "completedPomodoros": 1,
+        "isActive": false,
+        "isCompleted": true,
+        "priority": "low",
+        "createdAt": "2024-01-15T10:00:00.000Z",
+        "completedAt": "2024-01-15T14:00:00.000Z",
+        "order": 4
+      },
+      {
+        "id": "task-1704970000000-0.891",
+        "title": "Design new landing page",
+        "description": "Create mockups for hero section",
+        "estimatedPomodoros": 5,
+        "completedPomodoros": 0,
+        "isActive": false,
+        "isCompleted": false,
+        "priority": "low",
+        "createdAt": "2024-01-15T11:00:00.000Z",
+        "order": 5
+      }
+    ],
+    "activeTaskId": "task-1704960000000-0.123"
+  },
+  "stats": {
+    "totalSessions": 156,
+    "totalHours": 89,
+    "totalDays": 23,
+    "averagePerDay": 4.2,
+    "weeklyGrowth": 12,
+    "mostProductiveDay": "Wednesday",
+    "mostProductiveHour": 14
+  }
+}
+

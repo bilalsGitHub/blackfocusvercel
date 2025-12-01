@@ -1,0 +1,618 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2024-11-30T18:00:00.000Z",
+  "user": {
+    "email": "productive@example.com",
+    "name": "Productive User"
+  },
+  "timer": {
+    "sessions": [
+      {
+        "id": "1732867200000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-24T09:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732869000000-0.234",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-11-24T09:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732870800000-0.345",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-24T10:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732872600000-0.456",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-24T11:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732874400000-0.567",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-11-24T11:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732893600000-0.678",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-24T14:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732895400000-0.789",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-24T14:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732897200000-0.891",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-24T15:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732953600000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-25T08:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732955400000-0.234",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-25T08:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732957200000-0.345",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-11-25T09:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732959000000-0.456",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-25T09:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732960800000-0.567",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-25T10:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732980000000-0.678",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-25T14:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732981800000-0.789",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-25T14:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732983600000-0.891",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-25T15:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1732985400000-0.912",
+        "mode": "longBreak",
+        "duration": 900,
+        "completedAt": "2024-11-25T15:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733040000000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-26T07:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733041800000-0.234",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-26T07:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733043600000-0.345",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-11-26T08:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733045400000-0.456",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-26T08:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733047200000-0.567",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-26T09:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733049000000-0.678",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-26T09:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733050800000-0.789",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-11-26T10:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733052600000-0.891",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-26T10:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733054400000-0.912",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-26T11:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733070000000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-26T15:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733071800000-0.234",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-26T15:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733126400000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-27T08:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733128200000-0.234",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-27T08:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733130000000-0.345",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-27T09:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733131800000-0.456",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-11-27T09:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733133600000-0.567",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-27T10:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733135400000-0.678",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-27T10:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733137200000-0.789",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-27T11:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733156400000-0.891",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-27T14:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733158200000-0.912",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-27T14:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733160000000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-27T15:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733212800000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-28T09:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733214600000-0.234",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-28T09:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733216400000-0.345",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-11-28T10:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733218200000-0.456",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-28T10:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733220000000-0.567",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-28T11:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733242800000-0.678",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-28T14:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733244600000-0.789",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-28T14:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733299200000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-29T08:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733301000000-0.234",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-29T08:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733302800000-0.345",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-29T09:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733304600000-0.456",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-11-29T09:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733306400000-0.567",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-29T10:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733308200000-0.678",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-29T10:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733310000000-0.789",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-29T11:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733329200000-0.891",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-29T14:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733331000000-0.912",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-29T15:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733332800000-0.123",
+        "mode": "longBreak",
+        "duration": 900,
+        "completedAt": "2024-11-29T15:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733385600000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T07:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733387400000-0.234",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T07:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733389200000-0.345",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T08:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733391000000-0.456",
+        "mode": "shortBreak",
+        "duration": 300,
+        "completedAt": "2024-11-30T08:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733392800000-0.567",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T09:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733394600000-0.678",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T09:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733396400000-0.789",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T10:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733415600000-0.891",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T14:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733417400000-0.912",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T14:30:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733419200000-0.123",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T15:00:00.000Z",
+        "wasCompleted": true
+      },
+      {
+        "id": "1733421000000-0.234",
+        "mode": "focus",
+        "duration": 1500,
+        "completedAt": "2024-11-30T15:30:00.000Z",
+        "wasCompleted": true
+      }
+    ],
+    "completedSessions": 45,
+    "durations": {
+      "focus": 1500,
+      "shortBreak": 300,
+      "longBreak": 900
+    }
+  },
+  "tasks": {
+    "tasks": [
+      {
+        "id": "task-1732867200000-0.123",
+        "title": "Complete Project Documentation",
+        "description": "Write comprehensive API documentation and user guide",
+        "estimatedPomodoros": 8,
+        "completedPomodoros": 8,
+        "isActive": false,
+        "isCompleted": true,
+        "priority": "high",
+        "createdAt": "2024-11-24T08:00:00.000Z",
+        "completedAt": "2024-11-25T16:00:00.000Z",
+        "order": 0
+      },
+      {
+        "id": "task-1732953600000-0.456",
+        "title": "Fix Critical Bug #342",
+        "description": "Memory leak in timer component causing performance issues",
+        "estimatedPomodoros": 5,
+        "completedPomodoros": 5,
+        "isActive": false,
+        "isCompleted": true,
+        "priority": "high",
+        "createdAt": "2024-11-25T08:00:00.000Z",
+        "completedAt": "2024-11-26T14:00:00.000Z",
+        "order": 1
+      },
+      {
+        "id": "task-1733040000000-0.789",
+        "title": "Design New Landing Page",
+        "description": "Create mockups and implement hero section with animations",
+        "estimatedPomodoros": 12,
+        "completedPomodoros": 10,
+        "isActive": true,
+        "isCompleted": false,
+        "priority": "high",
+        "createdAt": "2024-11-26T07:00:00.000Z",
+        "order": 2
+      },
+      {
+        "id": "task-1733126400000-0.234",
+        "title": "Review Pull Requests",
+        "description": "Code review for authentication and analytics features",
+        "estimatedPomodoros": 4,
+        "completedPomodoros": 4,
+        "isActive": false,
+        "isCompleted": true,
+        "priority": "medium",
+        "createdAt": "2024-11-27T08:00:00.000Z",
+        "completedAt": "2024-11-27T12:00:00.000Z",
+        "order": 3
+      },
+      {
+        "id": "task-1733212800000-0.567",
+        "title": "Update Dependencies",
+        "description": "Update all packages to latest versions and test",
+        "estimatedPomodoros": 3,
+        "completedPomodoros": 3,
+        "isActive": false,
+        "isCompleted": true,
+        "priority": "low",
+        "createdAt": "2024-11-28T09:00:00.000Z",
+        "completedAt": "2024-11-28T14:00:00.000Z",
+        "order": 4
+      },
+      {
+        "id": "task-1733299200000-0.891",
+        "title": "Implement Export/Import Features",
+        "description": "Add JSON and CSV export functionality for analytics",
+        "estimatedPomodoros": 6,
+        "completedPomodoros": 5,
+        "isActive": false,
+        "isCompleted": false,
+        "priority": "medium",
+        "createdAt": "2024-11-29T08:00:00.000Z",
+        "order": 5
+      },
+      {
+        "id": "task-1733385600000-0.123",
+        "title": "Write Unit Tests",
+        "description": "Add test coverage for timer and task stores",
+        "estimatedPomodoros": 8,
+        "completedPomodoros": 5,
+        "isActive": false,
+        "isCompleted": false,
+        "priority": "medium",
+        "createdAt": "2024-11-30T07:00:00.000Z",
+        "order": 6
+      },
+      {
+        "id": "task-1733385600000-0.456",
+        "title": "Team Meeting Preparation",
+        "description": "Prepare slides for quarterly review presentation",
+        "estimatedPomodoros": 3,
+        "completedPomodoros": 0,
+        "isActive": false,
+        "isCompleted": false,
+        "priority": "high",
+        "createdAt": "2024-11-30T07:30:00.000Z",
+        "order": 7
+      },
+      {
+        "id": "task-1733385600000-0.789",
+        "title": "Optimize Performance",
+        "description": "Profile app and optimize render cycles",
+        "estimatedPomodoros": 4,
+        "completedPomodoros": 0,
+        "isActive": false,
+        "isCompleted": false,
+        "priority": "low",
+        "createdAt": "2024-11-30T08:00:00.000Z",
+        "order": 8
+      },
+      {
+        "id": "task-1733385600000-0.912",
+        "title": "Setup CI/CD Pipeline",
+        "description": "Configure GitHub Actions for automated testing and deployment",
+        "estimatedPomodoros": 5,
+        "completedPomodoros": 0,
+        "isActive": false,
+        "isCompleted": false,
+        "priority": "medium",
+        "createdAt": "2024-11-30T08:30:00.000Z",
+        "order": 9
+      }
+    ],
+    "activeTaskId": "task-1733040000000-0.789"
+  },
+  "stats": {
+    "totalSessions": 45,
+    "totalHours": 18,
+    "totalDays": 7,
+    "averagePerDay": 2.6,
+    "weeklyGrowth": 15,
+    "mostProductiveDay": "Wednesday",
+    "mostProductiveHour": 14
+  }
+}

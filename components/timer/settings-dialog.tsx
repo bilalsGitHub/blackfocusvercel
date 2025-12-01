@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Settings, Bell } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { useTimerStore } from "@/stores/timer-store";
 import { useSettingsStore } from "@/stores/settings-store";
 
@@ -99,8 +100,6 @@ export const SettingsDialog = React.forwardRef<SettingsDialogHandle>(function Se
       autoStartBreak: autoBreak,
       autoStartFocus: autoFocus,
       longBreakInterval: interval,
-      showProgressInTitle: showInTitle,
-      showTickMarkers: showTicks,
     });
 
     setOpen(false);
@@ -115,8 +114,6 @@ export const SettingsDialog = React.forwardRef<SettingsDialogHandle>(function Se
     setAutoBreak(false);
     setAutoFocus(false);
     setInterval(4);
-    setShowInTitle(true);
-    setShowTicks(true);
   };
 
   const handleRequestNotifications = async () => {
@@ -285,28 +282,24 @@ export const SettingsDialog = React.forwardRef<SettingsDialogHandle>(function Se
             <h3 className="text-sm font-semibold">Behavior</h3>
             
             <div className="flex items-center justify-between">
-              <Label htmlFor="auto-start-break" className="flex-1">
+              <Label htmlFor="auto-start-break" className="flex-1 cursor-pointer">
                 Auto-start breaks
               </Label>
-              <input
+              <Switch
                 id="auto-start-break"
-                type="checkbox"
                 checked={autoBreak}
-                onChange={(e) => setAutoBreak(e.target.checked)}
-                className="h-4 w-4"
+                onCheckedChange={setAutoBreak}
               />
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="auto-start-focus" className="flex-1">
+              <Label htmlFor="auto-start-focus" className="flex-1 cursor-pointer">
                 Auto-start focus sessions
               </Label>
-              <input
+              <Switch
                 id="auto-start-focus"
-                type="checkbox"
                 checked={autoFocus}
-                onChange={(e) => setAutoFocus(e.target.checked)}
-                className="h-4 w-4"
+                onCheckedChange={setAutoFocus}
               />
             </div>
 
@@ -330,31 +323,6 @@ export const SettingsDialog = React.forwardRef<SettingsDialogHandle>(function Se
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <Label htmlFor="show-in-title" className="flex-1">
-                Show timer in browser title
-              </Label>
-              <input
-                id="show-in-title"
-                type="checkbox"
-                checked={showInTitle}
-                onChange={(e) => setShowInTitle(e.target.checked)}
-                className="h-4 w-4"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="show-tick-markers" className="flex-1">
-                Show tick markers on timer
-              </Label>
-              <input
-                id="show-tick-markers"
-                type="checkbox"
-                checked={showTicks}
-                onChange={(e) => setShowTicks(e.target.checked)}
-                className="h-4 w-4"
-              />
-            </div>
           </div>
         </div>
 

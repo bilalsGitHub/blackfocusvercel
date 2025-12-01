@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 
 export interface NotificationSettings {
   enabled: boolean;
@@ -50,10 +49,12 @@ export interface AppSettings {
 }
 
 interface SettingsState extends AppSettings {
+  isLoading: boolean;
   // Actions
-  updateNotifications: (settings: Partial<NotificationSettings>) => void;
-  updateSettings: (settings: Partial<AppSettings>) => void;
-  resetSettings: () => void;
+  fetchSettings: () => Promise<void>;
+  updateNotifications: (settings: Partial<NotificationSettings>) => Promise<void>;
+  updateSettings: (settings: Partial<AppSettings>) => Promise<void>;
+  resetSettings: () => Promise<void>;
   requestNotificationPermission: () => Promise<boolean>;
 }
 
@@ -73,36 +74,88 @@ const DEFAULT_SETTINGS: AppSettings = {
   background: {
     enabled: false,
     imageUrl: "",
-    opacity: 90,
+    opacity: 100,
     blur: 0,
   },
   reduceMotion: false,
 };
 
-export const useSettingsStore = create<SettingsState>()(
-  persist(
-    (set, get) => ({
+export const useSettingsStore = create<SettingsState>()((set, get) => ({
       ...DEFAULT_SETTINGS,
+      isLoading: false,
+
+      // Fetch settings from backend
+      fetchSettings: async () => {
+        set({ isLoading: true });
+        try {
+          const response = await fetch("/api/settings");
+          if (!response.ok) throw new Error("Failed to fetch settings");
+          
+          const data = await response.json();
+          
+          if (data && data.data) {
+            set({ ...data.data, isLoading: false });
+          } else {
+            set({ isLoading: false });
+          }
+        } catch (error) {
+          console.error("Fetch settings error:", error);
+          set({ isLoading: false });
+        }
+      },
 
       // Update notification settings
-      updateNotifications: (newSettings) => {
+      updateNotifications: async (newSettings) => {
         const current = get().notifications;
-        set({
-          notifications: {
-            ...current,
-            ...newSettings,
-          },
-        });
+        const updatedNotifications = {
+          ...current,
+          ...newSettings,
+        };
+        
+        set({ notifications: updatedNotifications });
+        
+        // Save to backend
+        try {
+          await fetch("/api/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...get() }),
+          });
+        } catch (error) {
+          console.error("Update notifications error:", error);
+        }
       },
 
       // Update app settings
-      updateSettings: (newSettings) => {
+      updateSettings: async (newSettings) => {
         set(newSettings);
+        
+        // Save to backend
+        try {
+          await fetch("/api/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...get(), ...newSettings }),
+          });
+        } catch (error) {
+          console.error("Update settings error:", error);
+        }
       },
 
       // Reset to defaults
-      resetSettings: () => {
+      resetSettings: async () => {
         set(DEFAULT_SETTINGS);
+        
+        // Save to backend
+        try {
+          await fetch("/api/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(DEFAULT_SETTINGS),
+          });
+        } catch (error) {
+          console.error("Reset settings error:", error);
+        }
       },
 
       // Request notification permission
@@ -134,13 +187,7 @@ export const useSettingsStore = create<SettingsState>()(
 
         return false;
       },
-    }),
-    {
-      name: "settings-storage",
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-);
+    }));
 
 // Detect user's motion preference
 if (typeof window !== "undefined") {
@@ -155,17 +202,5 @@ if (typeof window !== "undefined") {
   }
 }
 
-// Cross-tab sync for settings
-if (typeof window !== "undefined") {
-  window.addEventListener("storage", (e) => {
-    if (e.key === "settings-storage" && e.newValue) {
-      try {
-        const newState = JSON.parse(e.newValue);
-        useSettingsStore.setState(newState.state);
-      } catch (error) {
-        console.error("Failed to sync settings:", error);
-      }
-    }
-  });
-}
+// Note: Settings are now fetched from Supabase, no localStorage sync needed
 

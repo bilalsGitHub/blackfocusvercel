@@ -1,0 +1,16 @@
+# BlackFocus - Pomodoro Timer - robots.txt
+
+User-agent: *
+Allow: /
+Allow: /timer
+Allow: /stats
+Allow: /analytics
+Allow: /pricing
+Allow: /login
+Allow: /register
+
+# Sitemap
+Sitemap: https://blackfocus.app/sitemap.xml
+
+# Crawl-delay for bots
+Crawl-delay: 1
