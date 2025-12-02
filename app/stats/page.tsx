@@ -271,8 +271,12 @@ export default function StatsPage() {
         totalDays: dailyStats.length,
         totalSessions: 0,
         totalMinutes: 0,
+        totalHours: "0m",
         avgSessionsPerDay: "0",
         avgMinutesPerDay: 0,
+        focusSessions: 0,
+        breakSessions: 0,
+        chronometerSessions: 0,
       };
     }
 
