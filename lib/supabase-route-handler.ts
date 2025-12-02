@@ -1,7 +1,11 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/auth-helpers-nextjs";
 
-export async function supabaseServer() {
+/**
+ * Create Supabase client for API Route Handlers
+ * Includes proper cookie handling for authentication
+ */
+export async function createRouteHandlerClient() {
   const cookieStore = await cookies();
 
   return createServerClient(
@@ -16,14 +20,15 @@ export async function supabaseServer() {
           try {
             cookieStore.set(name, value, options);
           } catch (error) {
-            // Handle cookie setting in server components
+            // Cookie setting may fail in Route Handlers during initial request
+            // This is expected behavior in some Next.js scenarios
           }
         },
         remove(name: string, options: any) {
           try {
             cookieStore.set(name, "", { ...options, maxAge: 0 });
           } catch (error) {
-            // Handle cookie removal in server components
+            // Cookie removal may fail in Route Handlers during initial request
           }
         },
       },

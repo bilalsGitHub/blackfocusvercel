@@ -1,23 +1,11 @@
-import { createServerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { createRouteHandlerClient } from "@/lib/supabase-route-handler";
 
 export async function POST() {
   try {
     console.log("🔥 [API] DELETE ALL DATA request received");
 
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
+    const supabase = await createRouteHandlerClient();
 
     const {
       data: { user },
