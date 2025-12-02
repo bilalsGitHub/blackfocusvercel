@@ -279,8 +279,11 @@ export const useTimerStore = create<TimerState>()((set, get) => ({
 
           // Increment task's completed pomodoro if this was a focus session
           if (state.mode === "focus" && activeTaskId && typeof window !== "undefined") {
+            console.log("[TIMER] Focus session completed, incrementing task pomodoro...");
             const { useTaskStore } = await import("./task-store");
             await useTaskStore.getState().incrementActiveTaskPomodoro();
+          } else if (state.mode === "focus") {
+            console.log("[TIMER] Focus session completed but no active task ID");
           }
         } catch (error) {
           console.error("Complete timer error:", error);

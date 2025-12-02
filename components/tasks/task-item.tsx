@@ -175,27 +175,29 @@ export function TaskItem({ task, onDragStart, onDragOver, onDragEnd }: TaskItemP
         {/* Actions */}
         <div className="flex items-center gap-0.5 sm:gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
           {!task.isCompleted && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 sm:h-8 sm:w-8"
-              onClick={() => setEditDialogOpen(true)}
-              disabled={isTimerActive}
-              aria-label="Edit task"
-            >
-              <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 sm:h-8 sm:w-8"
+                onClick={() => setEditDialogOpen(true)}
+                disabled={isTimerActive}
+                aria-label="Edit task"
+              >
+                <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 sm:h-8 sm:w-8 hover:text-destructive"
+                onClick={handleDelete}
+                disabled={isTimerActive}
+                aria-label="Delete task"
+              >
+                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+              </Button>
+            </>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 sm:h-8 sm:w-8 hover:text-destructive"
-            onClick={handleDelete}
-            disabled={isTimerActive}
-            aria-label="Delete task"
-          >
-            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
         </div>
       </div>
 

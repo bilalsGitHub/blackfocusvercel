@@ -10,30 +10,29 @@ import { useSettingsStore } from "@/stores/settings-store";
 export function DeleteAllDataButton() {
   const [isDeleting, setIsDeleting] = React.useState(false);
 
-  const handleDeleteAll = () => {
+  const handleDeleteAll = async () => {
     // Triple confirmation for safety
     const firstConfirm = window.confirm(
       "⚠️ WARNING: Delete ALL data?\n\n" +
-      "This will permanently delete:\n" +
-      "- All sessions\n" +
-      "- All tasks\n" +
-      "- All settings\n" +
-      "- All statistics\n\n" +
-      "This action CANNOT be undone!"
+        "This will permanently delete:\n" +
+        "- All sessions\n" +
+        "- All tasks\n" +
+        "- All settings\n" +
+        "- All statistics\n\n" +
+        "This action CANNOT be undone!"
     );
 
     if (!firstConfirm) return;
 
     const secondConfirm = window.confirm(
       "Are you ABSOLUTELY sure?\n\n" +
-      "Type 'DELETE' in your mind and click OK to confirm."
+        "Type 'DELETE' in your mind and click OK to confirm."
     );
 
     if (!secondConfirm) return;
 
     const finalConfirm = window.prompt(
-      "Final confirmation:\n\n" +
-      "Type 'DELETE' to confirm data deletion:"
+      "Final confirmation:\n\n" + "Type 'DELETE' to confirm data deletion:"
     );
 
     if (finalConfirm !== "DELETE") {
@@ -41,10 +40,28 @@ export function DeleteAllDataButton() {
       return;
     }
 
-    // Delete all data
     setIsDeleting(true);
+    console.log("🗑️ [Analytics] Starting delete all data...");
 
     try {
+      console.log("🔥 [Analytics] Calling /api/delete-all-data...");
+      const response = await fetch("/api/delete-all-data", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData?.error || `Failed to delete data: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("✅ [Analytics] Delete result:", result);
+      console.log(`   📊 Deleted ${result.deleted_sessions} sessions`);
+      console.log(`   📊 Deleted ${result.deleted_tasks} tasks`);
+      console.log(`   📊 Deleted ${result.deleted_settings} settings`);
+
       // Clear all localStorage first (including persist stores)
       localStorage.removeItem("timer-storage");
       localStorage.removeItem("task-storage");
@@ -88,28 +105,25 @@ export function DeleteAllDataButton() {
       });
 
       alert("✅ All data deleted successfully!");
-      
+
       // Force reload to clear everything
-      setTimeout(() => {
-        window.location.href = window.location.href;
-      }, 100);
+      window.location.reload();
     } catch (error) {
-      console.error("Delete error:", error);
+      console.error("❌ [Analytics] Delete error:", error);
       alert("❌ Error deleting data. Please try again.");
+    } finally {
       setIsDeleting(false);
     }
   };
 
   return (
-    <Button 
-      variant="destructive" 
+    <Button
+      variant="destructive"
       size="sm"
       onClick={handleDeleteAll}
-      disabled={isDeleting}
-    >
+      disabled={isDeleting}>
       <Trash2 className="h-4 w-4 mr-2" />
       {isDeleting ? "Deleting..." : "Delete All Data"}
     </Button>
   );
 }
-

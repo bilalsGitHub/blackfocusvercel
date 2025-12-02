@@ -19,29 +19,27 @@ export function UpgradeToProButton({
 }: UpgradeToProButtonProps) {
   const router = useRouter();
   const { user, setUser } = useAuthStore();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleUpgrade = async () => {
     // TEST MODE: Direkt Pro yap
     if (user) {
       try {
         console.log("[UPGRADE] Making user Pro:", user.email);
-        
-        // Update Supabase profile
-        const { supabaseBrowser } = await import("@/lib/supabase-browser");
-        const { error } = await supabaseBrowser
-          .from("profiles")
-          .update({ is_pro: true })
-          .eq("id", user.id);
+        setIsLoading(true);
 
-        if (error) {
-          console.error("[UPGRADE] ❌ Failed to update profile:", error);
-          alert("❌ Failed to upgrade. Please try again.");
-          return;
+        const response = await fetch("/api/upgrade-to-pro", {
+          method: "POST",
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData?.error || "Failed to upgrade user");
         }
 
-        console.log("[UPGRADE] ✅ Profile updated successfully");
-        
-        // Update local state
+        const result = await response.json();
+        console.log("[UPGRADE] ✅ API success:", result);
+
         setUser({
           ...user,
           isPro: true,
@@ -51,9 +49,12 @@ export function UpgradeToProButton({
         
         // Refresh to show Pro features
         window.location.reload();
+        setIsLoading(false);
+        window.location.reload();
       } catch (err) {
         console.error("[UPGRADE] ❌ Error:", err);
         alert("❌ Failed to upgrade. Please try again.");
+        setIsLoading(false);
       }
     } else {
       // Not logged in, redirect to login
@@ -76,10 +77,11 @@ export function UpgradeToProButton({
       variant={variant} 
       size={size} 
       onClick={handleUpgrade}
+      disabled={isLoading}
       className={className}
     >
       <Crown className="h-4 w-4 mr-2" />
-      Upgrade to Pro
+      {isLoading ? "Upgrading..." : "Upgrade to Pro"}
     </Button>
   );
 }

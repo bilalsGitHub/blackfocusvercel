@@ -76,5 +76,16 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-size: 16px;
+  }
+  
+  /* Better readability at 100% zoom */
+  html {
+    font-size: 16px;
+  }
+  
+  /* Ensure containers don't get too narrow */
+  .container {
+    max-width: 1400px;
   }
 }

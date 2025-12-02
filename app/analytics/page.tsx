@@ -81,6 +81,11 @@ export default function AnalyticsPage() {
       trend: "up" as const,
     },
     {
+      label: "Tasks Done",
+      value: summaryStats.completedTasks || 0,
+      suffix: "tasks",
+    },
+    {
       label: "Hours",
       value: summaryStats.totalHours,
       change: 5,
@@ -90,13 +95,6 @@ export default function AnalyticsPage() {
       label: "Days Active",
       value: summaryStats.totalDays,
       suffix: "days",
-    },
-    {
-      label: "Avg/Day",
-      value: summaryStats.averagePerDay,
-      suffix: "h",
-      change: 0.5,
-      trend: "up" as const,
     },
   ];
 

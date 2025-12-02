@@ -148,23 +148,44 @@ export default function TimerPage() {
             <div className="flex justify-center">
               <button
                 onClick={() => setIsFocusMode(!isFocusMode)}
-                className={`px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 transform hover:scale-105 ${
+                className={`group relative px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-full font-semibold transition-all duration-500 transform hover:scale-110 active:scale-95 overflow-hidden ${
                   isFocusMode
-                    ? 'bg-primary text-primary-foreground shadow-lg'
-                    : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+                    ? 'bg-primary text-primary-foreground shadow-2xl shadow-primary/30'
+                    : 'bg-muted hover:bg-muted/80 text-muted-foreground hover:shadow-lg'
                 }`}
               >
-                {isFocusMode ? (
-                  <span className="flex items-center gap-1.5 sm:gap-2">
-                    <span>👁️</span>
-                    <span>Show All</span>
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5 sm:gap-2">
-                    <span>🎯</span>
-                    <span>Focus Mode</span>
-                  </span>
-                )}
+                {/* Animated background gradient */}
+                <span className={`absolute inset-0 transition-opacity duration-500 ${
+                  isFocusMode ? 'opacity-100' : 'opacity-0'
+                }`}>
+                  <span className="absolute inset-0 bg-gradient-to-r from-primary via-primary/80 to-primary animate-pulse" />
+                </span>
+                
+                {/* Button content */}
+                <span className="relative z-10">
+                  {isFocusMode ? (
+                    <span className="flex items-center gap-1.5 sm:gap-2">
+                      <span className="text-lg sm:text-xl transform transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12">
+                        👁️
+                      </span>
+                      <span className="transition-all duration-300 group-hover:tracking-wide">
+                        Show All
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5 sm:gap-2">
+                      <span className="text-lg sm:text-xl transform transition-transform duration-300 group-hover:scale-125 group-hover:rotate-[-12deg]">
+                        🎯
+                      </span>
+                      <span className="transition-all duration-300 group-hover:tracking-wide">
+                        Focus Mode
+                      </span>
+                    </span>
+                  )}
+                </span>
+                
+                {/* Ripple effect on hover */}
+                <span className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-primary/20 transition-all duration-300 group-hover:scale-110" />
               </button>
             </div>
 

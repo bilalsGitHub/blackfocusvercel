@@ -49,10 +49,12 @@ const comparisonFeatures = [
 ];
 
 export default function PricingPage() {
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
   const router = useRouter();
   const isPro = user?.isPro || false;
   const [isYearly, setIsYearly] = React.useState(false);
+  const [isUpgrading, setIsUpgrading] = React.useState(false);
 
   // Pricing
   const monthlyPrice = 5;
@@ -60,13 +62,44 @@ export default function PricingPage() {
   const currentPrice = isYearly ? yearlyPrice : monthlyPrice;
   const pricePerMonth = isYearly ? (yearlyPrice / 12).toFixed(2) : monthlyPrice;
 
-  const handleUpgrade = () => {
-    // TODO: Integrate Stripe
-    alert(
-      `🚧 Stripe integration coming soon!\nSelected: ${
-        isYearly ? "Yearly" : "Monthly"
-      } plan ($${currentPrice})`
-    );
+  const handleUpgrade = async () => {
+    if (!user) {
+      router.push("/login?upgrade=true");
+      return;
+    }
+
+    try {
+      setIsUpgrading(true);
+      console.log("[PRICING] Upgrade button clicked");
+
+      const response = await fetch("/api/upgrade-to-pro", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData?.error || "Failed to upgrade");
+      }
+
+      const result = await response.json();
+      console.log("[PRICING] ✅ Upgrade success:", result);
+
+      setUser({
+        ...user,
+        isPro: true,
+      });
+
+      alert(
+        "🎉 You're now a Pro user!\n\nThe test upgrade flow updated your Supabase profile."
+      );
+
+      setIsUpgrading(false);
+      window.location.reload();
+    } catch (error) {
+      console.error("[PRICING] ❌ Upgrade error:", error);
+      alert("❌ Failed to upgrade. Please try again.");
+      setIsUpgrading(false);
+    }
   };
 
   const handleStartFree = () => {
@@ -249,11 +282,16 @@ export default function PricingPage() {
               size="lg"
               className="w-full mb-6 bg-primary hover:bg-primary/90"
               onClick={handleUpgrade}
-              disabled={isPro}>
+              disabled={isPro || isUpgrading}>
               {isPro ? (
                 <>
                   <Check className="h-4 w-4 mr-2" />
                   Current Plan
+                </>
+              ) : isUpgrading ? (
+                <>
+                  <Zap className="h-4 w-4 mr-2 animate-pulse" />
+                  Upgrading...
                 </>
               ) : (
                 <>
@@ -412,9 +450,26 @@ export default function PricingPage() {
             <Button size="lg" variant="outline" onClick={handleStartFree}>
               Start with Free
             </Button>
-            <Button size="lg" onClick={handleUpgrade} disabled={isPro}>
-              <Crown className="h-4 w-4 mr-2" />
-              {isPro ? "You're already Pro!" : "Start 14-Day Pro Trial"}
+            <Button
+              size="lg"
+              onClick={handleUpgrade}
+              disabled={isPro || isUpgrading}>
+              {isPro ? (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  You're already Pro!
+                </>
+              ) : isUpgrading ? (
+                <>
+                  <Zap className="h-4 w-4 mr-2 animate-pulse" />
+                  Upgrading...
+                </>
+              ) : (
+                <>
+                  <Crown className="h-4 w-4 mr-2" />
+                  Start 14-Day Pro Trial
+                </>
+              )}
             </Button>
           </div>
         </div>

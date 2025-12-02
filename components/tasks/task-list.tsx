@@ -5,54 +5,71 @@ import { TaskItem } from "./task-item";
 import { AddTaskInput } from "./add-task-input";
 import { TaskDateFilter } from "./task-date-filter";
 import { useTaskStore } from "@/stores/task-store";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
 
 export function TaskList() {
-  const { tasks, reorderTasks, clearCompletedTasks } = useTaskStore();
+  const { tasks, reorderTasks } = useTaskStore();
   const [selectedDate, setSelectedDate] = React.useState(new Date());
-  
+
   // Filter tasks by selected date
   const activeTasks = React.useMemo(() => {
     const selected = new Date(selectedDate);
-    selected.setHours(0, 0, 0, 0);
-    const selectedStr = selected.toISOString().split('T')[0];
-    
+    const year = selected.getFullYear();
+    const month = String(selected.getMonth() + 1).padStart(2, '0');
+    const day = String(selected.getDate()).padStart(2, '0');
+    const selectedStr = `${year}-${month}-${day}`;
+
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayStr = today.toISOString().split('T')[0];
-    
+    const todayYear = today.getFullYear();
+    const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+    const todayDay = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${todayYear}-${todayMonth}-${todayDay}`;
+
     return tasks
       .filter((task) => {
         if (task.isCompleted) return false;
-        
+
         // If task has scheduled date, check against that
         if (task.scheduledDate) {
           return task.scheduledDate === selectedStr;
         }
-        
+
         // If no scheduled date, only show on today
         return selectedStr === todayStr;
       })
       .sort((a, b) => a.order - b.order);
   }, [tasks, selectedDate]);
-  
+
   const completedTasks = React.useMemo(() => {
     const selected = new Date(selectedDate);
-    selected.setHours(0, 0, 0, 0);
-    
+    const year = selected.getFullYear();
+    const month = String(selected.getMonth() + 1).padStart(2, '0');
+    const day = String(selected.getDate()).padStart(2, '0');
+    const selectedStr = `${year}-${month}-${day}`;
+
     return tasks
       .filter((task) => {
         if (!task.isCompleted || !task.completedAt) return false;
-        
+
+        // Check if completed on selected date (by completedAt date)
         const completedDate = new Date(task.completedAt);
-        completedDate.setHours(0, 0, 0, 0);
-        
-        return completedDate.getTime() === selected.getTime();
+        const compYear = completedDate.getFullYear();
+        const compMonth = String(completedDate.getMonth() + 1).padStart(2, '0');
+        const compDay = String(completedDate.getDate()).padStart(2, '0');
+        const completedDateStr = `${compYear}-${compMonth}-${compDay}`;
+
+        const wasCompletedOnSelectedDate = completedDateStr === selectedStr;
+
+        // Check if scheduled for this date
+        const isScheduledForSelectedDate = task.scheduledDate === selectedStr;
+
+        // Show task if it was completed on selected date OR scheduled for selected date
+        return wasCompletedOnSelectedDate || isScheduledForSelectedDate;
       })
       .sort((a, b) => {
         if (!a.completedAt || !b.completedAt) return 0;
-        return new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime();
+        return (
+          new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
+        );
       });
   }, [tasks, selectedDate]);
 
@@ -64,7 +81,7 @@ export function TaskList() {
 
   const handleDragOver = (e: React.DragEvent, targetTaskId: string) => {
     e.preventDefault();
-    
+
     if (!draggedTaskId || draggedTaskId === targetTaskId) return;
 
     const draggedIndex = activeTasks.findIndex((t) => t.id === draggedTaskId);
@@ -87,9 +104,9 @@ export function TaskList() {
   return (
     <div className="space-y-4">
       {/* Date Filter */}
-      <TaskDateFilter 
-        selectedDate={selectedDate} 
-        onDateChange={setSelectedDate} 
+      <TaskDateFilter
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
       />
 
       {/* Add Task Input */}
@@ -128,15 +145,6 @@ export function TaskList() {
             <h3 className="text-sm font-semibold text-muted-foreground">
               Completed ({completedTasks.length})
             </h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearCompletedTasks}
-              className="h-8 text-xs"
-            >
-              <Trash2 className="h-3 w-3 mr-1" />
-              Clear
-            </Button>
           </div>
           <div className="space-y-2 opacity-60">
             {completedTasks.map((task) => (
@@ -148,4 +156,3 @@ export function TaskList() {
     </div>
   );
 }
-

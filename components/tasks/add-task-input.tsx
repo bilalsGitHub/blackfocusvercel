@@ -48,10 +48,11 @@ export function AddTaskInput({ selectedDate }: AddTaskInputProps) {
     
     if (!title.trim()) return;
 
-    // Check task limit for free users
-    if (!isPro && tasks.length >= 2) {
+    // Check task limit for free users - only count active (incomplete) tasks
+    const activeTasks = tasks.filter(task => !task.isCompleted);
+    if (!isPro && activeTasks.length >= 2) {
       const shouldUpgrade = window.confirm(
-        "🎯 Task Limit Reached!\n\nFree users can create up to 2 tasks.\n\nUpgrade to Pro for:\n• Unlimited tasks\n• Full analytics\n• Ad-free experience\n• Only $5/month\n\nGo to Pricing page?"
+        "🎯 Task Limit Reached!\n\nFree users can create up to 2 active tasks.\n\nUpgrade to Pro for:\n• Unlimited tasks\n• Full analytics\n• Ad-free experience\n• Only $5/month\n\nGo to Pricing page?"
       );
       
       if (shouldUpgrade) {
@@ -81,15 +82,15 @@ export function AddTaskInput({ selectedDate }: AddTaskInputProps) {
           variant="outline"
           className="w-full justify-start text-muted-foreground"
           onClick={() => setIsExpanded(true)}
-          disabled={isTimerActive || (!isPro && tasks.length >= 2)}
+          disabled={isTimerActive || (!isPro && tasks.filter(t => !t.isCompleted).length >= 2)}
         >
           <Plus className="h-4 w-4 mr-2" />
           {isTimerActive 
             ? "Pause timer to add tasks..." 
-            : !isPro && tasks.length >= 2
+            : !isPro && tasks.filter(t => !t.isCompleted).length >= 2
             ? "Upgrade to Pro for more tasks"
             : "Add a task..."}
-          {!isPro && tasks.length >= 2 && <Crown className="h-3 w-3 ml-2 text-yellow-500" />}
+          {!isPro && tasks.filter(t => !t.isCompleted).length >= 2 && <Crown className="h-3 w-3 ml-2 text-yellow-500" />}
         </Button>
       ) : (
         <>

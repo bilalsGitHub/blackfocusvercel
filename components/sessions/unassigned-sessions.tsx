@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Clock } from "lucide-react";
+import { Clock, Trash2, X } from "lucide-react";
 import type { Session } from "@/stores/timer-store";
 
 export function UnassignedSessions() {
@@ -38,6 +38,89 @@ export function UnassignedSessions() {
   const [newTaskTitles, setNewTaskTitles] = React.useState<{
     [sessionId: string]: string;
   }>({});
+  const [deletingSessionId, setDeletingSessionId] = React.useState<
+    string | null
+  >(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
+
+  const handleDeleteSession = async (sessionId: string) => {
+    if (!confirm("Are you sure you want to delete this session?")) return;
+
+    setDeletingSessionId(sessionId);
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete session");
+
+      // Remove from local state immediately
+      const updatedSessions = sessions.filter((s) => s.id !== sessionId);
+      useTimerStore.setState({ sessions: updatedSessions });
+    } catch (error) {
+      console.error("Error deleting session:", error);
+      alert("Failed to delete session");
+    } finally {
+      setDeletingSessionId(null);
+    }
+  };
+
+  const handleDeleteAllData = async () => {
+    const totalSessions = sessions.length;
+    const totalTasks = tasks.length;
+
+    if (
+      !confirm(
+        `🔥 DELETE ALL DATA?\n\n⚠️ THIS WILL DELETE EVERYTHING:\n• ${totalSessions} sessions (ALL)\n• ${totalTasks} tasks (ALL)\n\n❌ THIS CANNOT BE UNDONE!\n\nAre you absolutely sure?`
+      )
+    )
+      return;
+
+    // Double confirmation
+    if (
+      !confirm(
+        `⚠️⚠️⚠️ FINAL WARNING ⚠️⚠️⚠️\n\nYou are about to DELETE ALL DATA.\n\nType YES in your mind and click OK to proceed.`
+      )
+    )
+      return;
+
+    setIsDeleting(true);
+    console.log("🗑️ Starting delete all data...");
+    console.log(`📊 Found ${totalSessions} sessions and ${totalTasks} tasks`);
+
+    try {
+      // Call new Supabase function to delete ALL data at once
+      console.log("🔥 Calling /api/delete-all-data...");
+      const response = await fetch("/api/delete-all-data", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete data: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log("✅ Delete result:", result);
+      console.log(`   📊 Deleted ${result.deleted_sessions} sessions`);
+      console.log(`   📊 Deleted ${result.deleted_tasks} tasks`);
+      console.log(`   📊 Deleted ${result.deleted_settings} settings`);
+
+      // Clear local stores immediately
+      console.log("🔄 Clearing local stores...");
+      useTimerStore.setState({ sessions: [], completedSessions: 0 });
+      useTaskStore.setState({ tasks: [], activeTaskId: null });
+
+      console.log("✅ All data deleted successfully!");
+
+      // Reload page immediately for clean state
+      window.location.reload();
+    } catch (error) {
+      console.error("❌ Error deleting all data:", error);
+      alert("❌ Failed to delete data. Check console for details.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleAssignSession = async (sessionId: string, taskId: string) => {
     const sessionIndex = sessions.findIndex((s) => s.id === sessionId);
@@ -181,14 +264,25 @@ export function UnassignedSessions() {
     <Card className="p-3 sm:p-4 border-dashed border-muted-foreground/30">
       <div className="space-y-3">
         {/* Header */}
-        <div>
-          <h3 className="text-sm font-semibold flex items-center gap-2">
-            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-            Unassigned Sessions ({unassignedSessions.length})
-          </h3>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            Assign to existing task or create new
-          </p>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <h3 className="text-sm font-semibold flex items-center gap-2">
+              <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+              Unassigned Sessions ({unassignedSessions.length})
+            </h3>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              Assign to task or delete all data
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleDeleteAllData}
+            disabled={isDeleting}
+            className="h-7 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10">
+            <Trash2 className="h-3 w-3 mr-1" />
+            {isDeleting ? "Deleting..." : "Delete All"}
+          </Button>
         </div>
 
         {/* Sessions List */}
@@ -207,9 +301,19 @@ export function UnassignedSessions() {
             return (
               <div
                 key={session.id}
-                className="p-2.5 rounded-lg border bg-muted/30 space-y-2">
+                className="p-2.5 rounded-lg border bg-muted/30 space-y-2 relative group">
+                {/* Delete Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDeleteSession(session.id)}
+                  disabled={deletingSessionId === session.id}
+                  className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10">
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+
                 {/* Session Info Row */}
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-2 flex-wrap pr-7">
                   <Badge
                     variant="secondary"
                     className="text-[11px] font-medium px-2 py-0.5">

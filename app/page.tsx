@@ -9,11 +9,13 @@ import {
   Timer,
   TrendingUp,
   Zap,
-  Gauge,
   BarChart3,
   Cloud,
   Play,
   Lock,
+  Music,
+  Star,
+  Cpu,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 import Head from "next/head";
@@ -45,24 +47,19 @@ export default function LandingPage() {
   return (
     <>
       <Head>
-        <title>BlackFocus - Free Online Pomodoro Timer | Focus Timer for Productivity</title>
+        <title>
+          BlackFocus - Free Online Pomodoro Timer | Focus Timer for Productivity
+        </title>
         <meta
           name="description"
           content="Free Pomodoro timer online with black minimalist design. Best focus timer for work and study. No ads, no distractions. Start your productive session now!"
         />
       </Head>
-      
+
       <div className="min-h-[calc(100vh-3.5rem)]">
         {/* Hero Section */}
         <section className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto text-center space-y-8">
-            {/* Badge */}
-            <Badge
-              variant="secondary"
-              className="text-sm px-4 py-1.5 bg-primary/10 text-primary border-primary/20">
-              Free Online Pomodoro Timer
-            </Badge>
-
             {/* Heading with SEO keywords */}
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
               <span className="block bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
@@ -72,7 +69,8 @@ export default function LandingPage() {
 
             {/* Subtitle with keywords */}
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Free online Pomodoro timer with minimal black design. Perfect focus timer for productivity, study sessions, and deep work. No distractions, just results.
+              Maximize your productivity with our elegant Pomodoro timer
+              designed for deep work and study sessions.
             </p>
 
             {/* CTA Buttons */}
@@ -105,32 +103,50 @@ export default function LandingPage() {
 
             {/* SEO Keywords Section */}
             <div className="pt-8">
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-base text-muted-foreground mb-5">
                 Perfect for:
               </p>
-              <div className="flex flex-wrap justify-center gap-2">
-                <Badge variant="outline">Pomodoro Technique</Badge>
-                <Badge variant="outline">Study Timer</Badge>
-                <Badge variant="outline">Work Focus</Badge>
-                <Badge variant="outline">Time Management</Badge>
-                <Badge variant="outline">Productivity Timer</Badge>
-                <Badge variant="outline">Deep Work</Badge>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Badge variant="outline" className="text-sm px-4 py-2">
+                  Pomodoro Technique
+                </Badge>
+                <Badge variant="outline" className="text-sm px-4 py-2">
+                  Study Timer
+                </Badge>
+                <Badge variant="outline" className="text-sm px-4 py-2">
+                  Work Focus
+                </Badge>
+                <Badge variant="outline" className="text-sm px-4 py-2">
+                  Time Management
+                </Badge>
+                <Badge variant="outline" className="text-sm px-4 py-2">
+                  Productivity Timer
+                </Badge>
+                <Badge variant="outline" className="text-sm px-4 py-2">
+                  Deep Work
+                </Badge>
               </div>
             </div>
 
             {/* Quick Stats */}
-            <div className="flex flex-wrap justify-center gap-8 pt-12 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Zap className="h-4 w-4" />
-                <span>Fast & Lightweight</span>
+            <div className="flex flex-wrap justify-center gap-10 pt-12 text-base text-muted-foreground">
+              <div className="flex items-center gap-2.5">
+                <Zap className="h-5 w-5" />
+                <span className="font-medium">Fast & Lightweight</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Gauge className="h-4 w-4" />
-                <span>60 FPS Smooth</span>
+              <div className="flex items-center gap-2.5">
+                <Cpu className="h-5 w-5" />
+                <span className="font-medium">Very Low RAM Usage</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Cloud className="h-4 w-4" />
-                <span>Cloud Sync Ready</span>
+              <div className="flex items-center gap-2.5">
+                <Music className="h-5 w-5" />
+                <span className="font-medium">
+                  Built-in Focus Music Spotify
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Cloud className="h-5 w-5" />
+                <span className="font-medium">Cloud Sync Ready</span>
               </div>
             </div>
           </div>
@@ -141,19 +157,20 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                The Best Free Pomodoro Timer Online
+                Best Unique Black Minimal Timer
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Everything you need in a focus timer - clean, minimal, and distraction-free
+                Everything you need in a focus timer - clean, minimal, and
+                distraction-free
               </p>
             </div>
 
             {/* Feature Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <FeatureCard
-                icon={<Gauge className="h-8 w-8" />}
+                icon={<Timer className="h-8 w-8" />}
                 title="Precise Timer Engine"
-                description="Powered by requestAnimationFrame for butter-smooth 60fps timing. The most accurate online Pomodoro timer available."
+                description="Powered by requestAnimationFrame for butter-smooth timing. The most accurate online Pomodoro timer available."
                 highlight="Perfect Accuracy"
               />
 
@@ -178,6 +195,13 @@ export default function LandingPage() {
                 title="Minimal Black Design"
                 description="Beautiful dark theme that's easy on your eyes. Minimalist interface keeps you focused on what matters."
                 highlight="Distraction-Free"
+              />
+
+              <FeatureCard
+                icon={<Music className="h-8 w-8" />}
+                title="Focus Music Player"
+                description="Built-in Spotify player with curated focus playlists. Listen to lofi, piano, and deep focus music while you work - completely free!"
+                highlight="Free for Everyone"
               />
 
               <FeatureCard
@@ -213,7 +237,11 @@ export default function LandingPage() {
                   🎯 Free Pomodoro Timer Online
                 </h3>
                 <p className="leading-relaxed">
-                  BlackFocus is a completely free online Pomodoro timer that works in your browser. No download required, no signup needed to get started. Our black timer features a clean, minimalist design that eliminates distractions and helps you focus on your work.
+                  BlackFocus is a completely free online Pomodoro timer that
+                  works in your browser. No download required, no signup needed
+                  to get started. Our black timer features a clean, minimalist
+                  design that eliminates distractions and helps you focus on
+                  your work.
                 </p>
               </div>
 
@@ -222,7 +250,11 @@ export default function LandingPage() {
                   ⚫ Minimal Black Timer Design
                 </h3>
                 <p className="leading-relaxed">
-                  Experience the beauty of minimalism with our black focus timer. The dark theme is easy on your eyes during long work sessions and creates the perfect environment for deep concentration. Unlike cluttered timer apps, our minimal timer keeps your workspace clean and distraction-free.
+                  Experience the beauty of minimalism with our black focus
+                  timer. The dark theme is easy on your eyes during long work
+                  sessions and creates the perfect environment for deep
+                  concentration. Unlike cluttered timer apps, our minimal timer
+                  keeps your workspace clean and distraction-free.
                 </p>
               </div>
 
@@ -231,7 +263,11 @@ export default function LandingPage() {
                   🍅 Perfect Pomodoro Technique Timer
                 </h3>
                 <p className="leading-relaxed">
-                  Master the Pomodoro Technique with our online timer. Default 25-minute focus sessions with 5-minute breaks help you maintain peak productivity. Customize timer durations to match your personal workflow. Our Pomodoro clock is perfect for studying, coding, writing, and any focused work.
+                  Master the Pomodoro Technique with our online timer. Default
+                  25-minute focus sessions with 5-minute breaks help you
+                  maintain peak productivity. Customize timer durations to match
+                  your personal workflow. Our Pomodoro clock is perfect for
+                  studying, coding, writing, and any focused work.
                 </p>
               </div>
 
@@ -240,7 +276,11 @@ export default function LandingPage() {
                   📊 Track Your Productivity
                 </h3>
                 <p className="leading-relaxed">
-                  Not just a simple timer - BlackFocus includes powerful analytics to track your focus sessions over time. See your productivity patterns, identify peak performance hours, and build consistent work habits. Our time tracker helps you understand and improve your time management.
+                  Not just a simple timer - BlackFocus includes powerful
+                  analytics to track your focus sessions over time. See your
+                  productivity patterns, identify peak performance hours, and
+                  build consistent work habits. Our time tracker helps you
+                  understand and improve your time management.
                 </p>
               </div>
 
@@ -249,7 +289,11 @@ export default function LandingPage() {
                   ⚡ Fast & Reliable Focus Timer
                 </h3>
                 <p className="leading-relaxed">
-                  Built with modern web technology for lightning-fast performance. Our timer engine uses requestAnimationFrame for smooth 60fps animations and precise timing. Whether you need a study timer, work timer, or concentration timer - BlackFocus delivers reliable performance every time.
+                  Built with modern web technology for lightning-fast
+                  performance. Our timer engine uses requestAnimationFrame for
+                  smooth 60fps animations and precise timing. Whether you need a
+                  study timer, work timer, or concentration timer - BlackFocus
+                  delivers reliable performance every time.
                 </p>
               </div>
 
@@ -258,29 +302,92 @@ export default function LandingPage() {
                   🌐 Works Everywhere - Online Timer
                 </h3>
                 <p className="leading-relaxed">
-                  Use our online Pomodoro timer on any device - desktop, laptop, tablet, or phone. No app download required. Just open your browser and start your focus session. Perfect for remote work, online study sessions, and productivity on the go.
+                  Use our online Pomodoro timer on any device - desktop, laptop,
+                  tablet, or phone. No app download required. Just open your
+                  browser and start your focus session. Perfect for remote work,
+                  online study sessions, and productivity on the go.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-20 px-4">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl md:text-5xl font-bold">
-              Start Your Focus Session Now
-            </h2>
-            <p className="text-lg md:text-xl text-muted-foreground">
-              Join thousands using BlackFocus as their go-to Pomodoro timer. Free forever, no signup required.
-            </p>
-            <Button
-              size="lg"
-              onClick={handleStartSession}
-              className="text-lg h-14 px-10 shadow-lg hover:shadow-xl transition-all">
-              <Play className="mr-2 h-5 w-5" />
-              Start Free Timer - No Signup
-            </Button>
+        {/* Testimonials Section */}
+        <section className="py-20 px-4 bg-muted/30">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold mb-4">
+                What Our Users Say
+              </h2>
+              <p className="text-lg md:text-xl text-muted-foreground">
+                Join thousands of productive users loving BlackFocus
+              </p>
+            </div>
+
+            {/* Testimonials Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <TestimonialCard
+                name="Sarah Chen"
+                role="Software Engineer"
+                avatar="SC"
+                rating={5}
+                text="Best Pomodoro timer I've used! The built-in Spotify player is a game-changer. I can focus for hours with lofi beats in the background."
+              />
+
+              <TestimonialCard
+                name="Marcus Johnson"
+                role="Product Designer"
+                avatar="MJ"
+                rating={5}
+                text="The minimal black design is exactly what I needed. No distractions, just pure focus. The analytics help me track my productivity patterns."
+              />
+
+              <TestimonialCard
+                name="Emma Rodriguez"
+                role="Medical Student"
+                avatar="ER"
+                rating={5}
+                text="I've been using this for my study sessions and it's incredible. The free music feature and smooth timer make studying actually enjoyable!"
+              />
+
+              <TestimonialCard
+                name="David Kim"
+                role="Content Creator"
+                avatar="DK"
+                rating={5}
+                text="Finally a timer that actually helps me focus! The keyboard shortcuts are super convenient and the dark theme is easy on my eyes during long work sessions."
+              />
+
+              <TestimonialCard
+                name="Lisa Anderson"
+                role="Marketing Manager"
+                avatar="LA"
+                rating={5}
+                text="Clean, fast, and totally free! I love how I can customize the timer durations. The Spotify integration is the cherry on top. Highly recommend!"
+              />
+
+              <TestimonialCard
+                name="Ahmed Hassan"
+                role="PhD Researcher"
+                avatar="AH"
+                rating={5}
+                text="This timer has transformed my research workflow. The focus mode removes all distractions and the analytics show me exactly when I'm most productive."
+              />
+            </div>
+
+            {/* CTA Button */}
+            <div className="text-center mt-12">
+              <Button
+                size="lg"
+                onClick={handleStartSession}
+                className="text-lg h-14 px-10 shadow-lg hover:shadow-xl transition-all">
+                <Play className="mr-2 h-5 w-5" />
+                Start Your Free Session Now
+              </Button>
+              <p className="text-sm text-muted-foreground mt-4">
+                No signup required • Free forever
+              </p>
+            </div>
           </div>
         </section>
 
@@ -314,7 +421,9 @@ export default function LandingPage() {
             </div>
             <div className="text-xs text-muted-foreground text-center space-y-2">
               <p>
-                Keywords: pomodoro timer, focus timer, black timer, minimal timer, timer online, productivity timer, study timer, work timer, pomodoro technique, time management, concentration timer
+                Keywords: pomodoro timer, focus timer, black timer, minimal
+                timer, timer online, productivity timer, study timer, work
+                timer, pomodoro technique, time management, concentration timer
               </p>
             </div>
           </div>
@@ -367,6 +476,47 @@ function FeatureCard({
 
       {/* Highlight */}
       <div className="text-sm font-medium text-primary/80">{highlight}</div>
+    </div>
+  );
+}
+
+interface TestimonialCardProps {
+  name: string;
+  role: string;
+  avatar: string;
+  rating: number;
+  text: string;
+}
+
+function TestimonialCard({
+  name,
+  role,
+  avatar,
+  rating,
+  text,
+}: TestimonialCardProps) {
+  return (
+    <div className="group relative p-6 rounded-2xl border bg-card hover:shadow-xl transition-all duration-300">
+      {/* Avatar and Info */}
+      <div className="flex items-center gap-4 mb-4">
+        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+          {avatar}
+        </div>
+        <div className="flex-1">
+          <h4 className="font-semibold text-sm">{name}</h4>
+          <p className="text-xs text-muted-foreground">{role}</p>
+        </div>
+      </div>
+
+      {/* Rating Stars */}
+      <div className="flex gap-1 mb-3">
+        {Array.from({ length: rating }).map((_, i) => (
+          <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+        ))}
+      </div>
+
+      {/* Testimonial Text */}
+      <p className="text-sm text-muted-foreground leading-relaxed">"{text}"</p>
     </div>
   );
 }

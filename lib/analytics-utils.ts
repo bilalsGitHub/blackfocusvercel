@@ -1,4 +1,5 @@
 import { useTimerStore, Session } from "@/stores/timer-store";
+import { useTaskStore } from "@/stores/task-store";
 
 export interface HeatmapDay {
   date: string;
@@ -122,9 +123,11 @@ export function generateRealWeeklyData(weekOffset: number = 0) {
 
 export function generateRealSummaryStats() {
   const sessions = useTimerStore.getState().sessions;
-  const completedSessions = useTimerStore.getState().completedSessions;
+  const tasks = useTaskStore.getState().tasks;
+  const completedTasks = tasks.filter((t) => t.isCompleted);
+  const completedSessionsList = sessions.filter((s) => s.wasCompleted);
 
-  if (sessions.length === 0) {
+  if (completedSessionsList.length === 0 && completedTasks.length === 0) {
     return {
       totalSessions: 0,
       totalHours: 0,
@@ -133,16 +136,14 @@ export function generateRealSummaryStats() {
       weeklyGrowth: 0,
       mostProductiveDay: "N/A",
       mostProductiveHour: 0,
+      completedTasks: 0,
     };
   }
 
-  // Total sessions
-  const totalSessions = completedSessions;
+  // Total sessions (completed focus/chrono sessions only)
+  const completedSessionsCount = completedSessionsList.length;
+  const totalSessions = completedSessionsCount;
 
-  // Total hours (all completed sessions - focus + chrono)
-  const completedSessionsList = sessions.filter(
-    (s) => s.wasCompleted
-  );
   const totalMinutes = completedSessionsList.reduce(
     (sum, s) => sum + s.duration / 60,
     0
@@ -157,10 +158,15 @@ export function generateRealSummaryStats() {
     totalHours,
   });
 
-  // Get unique days
-  const uniqueDays = new Set(
-    sessions.map((s) => getLocalDateKey(new Date(s.completedAt)))
-  );
+  // Get unique days (from both sessions and completed tasks)
+  const uniqueDays = new Set([
+    ...completedSessionsList.map((s) =>
+      getLocalDateKey(new Date(s.completedAt))
+    ),
+    ...completedTasks
+      .filter((t) => t.completedAt)
+      .map((t) => getLocalDateKey(new Date(t.completedAt!))),
+  ]);
   const totalDays = uniqueDays.size;
 
   // Average per day
@@ -227,6 +233,7 @@ export function generateRealSummaryStats() {
     weeklyGrowth,
     mostProductiveDay,
     mostProductiveHour,
+    completedTasks: completedTasks.length,
   };
 }
 

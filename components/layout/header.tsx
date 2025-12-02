@@ -12,7 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Timer, User, LogOut, Settings, Crown } from "lucide-react";
+import {
+  Timer,
+  User,
+  LogOut,
+  Settings,
+  Crown,
+  CalendarDays,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { UpgradeToProButton } from "@/components/upgrade-to-pro-button";
@@ -41,21 +48,21 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between px-3 sm:px-4">
+      <div className="container max-w-7xl mx-auto flex h-16 items-center px-4 md:px-6">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center space-x-1.5 sm:space-x-2 font-bold text-base sm:text-lg hover:text-primary transition-colors">
-          <Timer className="h-4 w-4 sm:h-5 sm:w-5" />
-          <span className="hidden sm:inline">BlackFocus</span>
+          className="flex items-center space-x-2 font-bold text-lg hover:text-primary transition-colors mr-8">
+          <Timer className="h-5 w-5" />
+          <span>BlackFocus</span>
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-2 sm:gap-4 md:gap-6">
+        <nav className="flex items-center gap-6 flex-1">
           <Link
             href="/timer"
             className={cn(
-              "text-xs sm:text-sm font-medium transition-colors hover:text-primary",
+              "text-sm font-medium transition-colors hover:text-primary",
               pathname === "/timer" ? "text-primary" : "text-muted-foreground"
             )}>
             Timer
@@ -63,39 +70,45 @@ export function Header() {
           <Link
             href="/stats"
             className={cn(
-              "text-xs sm:text-sm font-medium transition-colors hover:text-primary",
-              pathname === "/stats"
-                ? "text-primary"
-                : "text-muted-foreground"
+              "text-sm font-medium transition-colors hover:text-primary",
+              pathname === "/stats" ? "text-primary" : "text-muted-foreground"
             )}>
             Stats
           </Link>
           <Link
             href="/analytics"
             className={cn(
-              "text-xs sm:text-sm font-medium transition-colors hover:text-primary flex items-center gap-1",
+              "text-sm font-medium transition-colors hover:text-primary flex items-center gap-1",
               pathname === "/analytics"
                 ? "text-primary"
                 : "text-muted-foreground"
             )}>
-            <span className="hidden sm:inline">Analytics</span>
-            <span className="sm:hidden">More</span>
-            {user?.isPro && (
-              <Crown className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-yellow-500" />
-            )}
+            Analytics
+            {user?.isPro && <Crown className="h-3 w-3 text-yellow-500" />}
           </Link>
           <Link
             href="/pricing"
             className={cn(
-              "text-xs sm:text-sm font-medium transition-colors hover:text-primary hidden sm:inline",
+              "text-sm font-medium transition-colors hover:text-primary",
               pathname === "/pricing" ? "text-primary" : "text-muted-foreground"
             )}>
             Pricing
           </Link>
+          <Link
+            href="/calendar"
+            className={cn(
+              "text-sm font-medium transition-colors hover:text-primary flex items-center gap-1",
+              pathname === "/calendar"
+                ? "text-primary"
+                : "text-muted-foreground"
+            )}>
+            <CalendarDays className="h-4 w-4" />
+            Calendar
+          </Link>
         </nav>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-3 ml-auto">
           {isAuthenticated && user ? (
             <>
               {/* User Menu */}
@@ -162,13 +175,13 @@ export function Header() {
           ) : (
             <>
               {/* Login/Register Buttons */}
-              <Link href="/login" className="hidden sm:block">
-                <Button variant="ghost" size="sm">
+              <Link href="/login">
+                <Button variant="ghost" size="default">
                   Login
                 </Button>
               </Link>
-              <Link href="/register" className="hidden sm:block">
-                <Button size="sm">Sign up</Button>
+              <Link href="/register">
+                <Button size="default">Sign up</Button>
               </Link>
             </>
           )}

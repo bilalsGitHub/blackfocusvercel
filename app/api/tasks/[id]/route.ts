@@ -21,7 +21,9 @@ export async function PATCH(
       }
     );
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -31,13 +33,18 @@ export async function PATCH(
 
     if (body.title !== undefined) updates.title = body.title;
     if (body.description !== undefined) updates.description = body.description;
-    if (body.estimatedPomodoros !== undefined) updates.estimated_pomodoros = body.estimatedPomodoros;
-    if (body.completedPomodoros !== undefined) updates.completed_pomodoros = body.completedPomodoros;
+    if (body.estimatedPomodoros !== undefined)
+      updates.estimated_pomodoros = body.estimatedPomodoros;
+    if (body.completedPomodoros !== undefined)
+      updates.completed_pomodoros = body.completedPomodoros;
     if (body.priority !== undefined) updates.priority = body.priority;
-    if (body.scheduledDate !== undefined) updates.scheduled_date = body.scheduledDate;
+    if (body.scheduledDate !== undefined)
+      updates.scheduled_date = body.scheduledDate;
     if (body.isCompleted !== undefined) updates.is_completed = body.isCompleted;
-    if (body.isChronoLog !== undefined) updates.is_chrono_log = body.isChronoLog;
-    if (body.chronoDurationSeconds !== undefined) updates.chrono_duration_seconds = body.chronoDurationSeconds;
+    if (body.isChronoLog !== undefined)
+      updates.is_chrono_log = body.isChronoLog;
+    if (body.chronoDurationSeconds !== undefined)
+      updates.chrono_duration_seconds = body.chronoDurationSeconds;
     if (body.order !== undefined) updates.order_index = body.order;
     if (body.completedAt !== undefined) updates.completed_at = body.completedAt;
 
@@ -53,10 +60,7 @@ export async function PATCH(
 
     return NextResponse.json(data);
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
@@ -66,6 +70,8 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+    console.log(`🗑️ [API] DELETE task request - ID: ${id}`);
+
     const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -79,10 +85,15 @@ export async function DELETE(
       }
     );
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
+      console.log(`❌ [API] Unauthorized - No user found`);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    console.log(`👤 [API] User ID: ${user.id}`);
 
     const { error } = await supabase
       .from("tasks")
@@ -90,14 +101,15 @@ export async function DELETE(
       .eq("id", id)
       .eq("user_id", user.id);
 
-    if (error) throw error;
+    if (error) {
+      console.error(`❌ [API] Supabase delete error:`, error);
+      throw error;
+    }
 
+    console.log(`✅ [API] Task deleted successfully - ID: ${id}`);
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
+    console.error(`❌ [API] DELETE task error:`, error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
