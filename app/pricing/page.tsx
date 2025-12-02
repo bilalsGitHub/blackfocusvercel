@@ -89,7 +89,7 @@ export default function PricingPage() {
         isPro: true,
       });
 
-      alert(
+    alert(
         "🎉 You're now a Pro user!\n\nThe test upgrade flow updated your Supabase profile."
       );
 
@@ -466,7 +466,7 @@ export default function PricingPage() {
                 </>
               ) : (
                 <>
-                  <Crown className="h-4 w-4 mr-2" />
+              <Crown className="h-4 w-4 mr-2" />
                   Start 14-Day Pro Trial
                 </>
               )}

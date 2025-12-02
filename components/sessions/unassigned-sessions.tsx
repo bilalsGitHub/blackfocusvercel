@@ -265,14 +265,14 @@ export function UnassignedSessions() {
       <div className="space-y-3">
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
-          <div>
-            <h3 className="text-sm font-semibold flex items-center gap-2">
-              <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-              Unassigned Sessions ({unassignedSessions.length})
-            </h3>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+        <div>
+          <h3 className="text-sm font-semibold flex items-center gap-2">
+            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+            Unassigned Sessions ({unassignedSessions.length})
+          </h3>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
               Assign to task or delete all data
-            </p>
+          </p>
           </div>
           <Button
             variant="ghost"
