@@ -48,11 +48,11 @@ export default function LandingPage() {
     <>
       <Head>
         <title>
-          BlackFocus - Free Online Pomodoro Timer | Focus Timer for Productivity
+          BlackFocus - The Timer You've Been Looking For | Free Pomodoro Timer
         </title>
         <meta
           name="description"
-          content="Free Pomodoro timer online with black minimalist design. Best focus timer for work and study. No ads, no distractions. Start your productive session now!"
+          content="The timer you've been searching for. Minimalist Pomodoro timer with Spotify, analytics, and beautiful dark theme. Free forever, no distractions."
         />
       </Head>
 
@@ -63,14 +63,14 @@ export default function LandingPage() {
             {/* Heading with SEO keywords */}
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
               <span className="block bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
-                Black Focus Timer
+                The Timer You've Been Looking For
               </span>
             </h1>
 
             {/* Subtitle with keywords */}
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Maximize your productivity with our elegant Pomodoro timer
-              designed for deep work and study sessions.
+              Minimalist, elegant, and powerful. The Pomodoro timer you've been
+              searching for.
             </p>
 
             {/* CTA Buttons */}

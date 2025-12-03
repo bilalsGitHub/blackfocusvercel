@@ -16,9 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useSettingsStore } from "@/stores/settings-store";
-import { useTimerStore } from "@/stores/timer-store";
 import { useAuthStore } from "@/stores/auth-store";
-import { ArrowLeft, Bell, Clock, Palette, Volume2, Crown } from "lucide-react";
+import { ArrowLeft, Bell, Clock, Palette, Crown } from "lucide-react";
 import { BACKGROUND_IMAGES, THEME_PRESETS } from "@/lib/theme-presets";
 import type { ThemePreset } from "@/stores/settings-store";
 import { cn } from "@/lib/utils";
@@ -44,7 +43,6 @@ export default function SettingsPage() {
     background,
   } = useSettingsStore();
 
-  const { durations, updateDurations } = useTimerStore();
   const isPro = user?.isPro ?? false;
 
   const [customImageUrl, setCustomImageUrl] = React.useState(
@@ -69,36 +67,8 @@ export default function SettingsPage() {
       }));
   }, []);
 
-  // Timer durations (in minutes)
-  const [focusDuration, setFocusDuration] = React.useState(
-    Math.floor(durations.focus / 60)
-  );
-  const [shortBreakDuration, setShortBreakDuration] = React.useState(
-    Math.floor(durations.shortBreak / 60)
-  );
-  const [longBreakDuration, setLongBreakDuration] = React.useState(
-    Math.floor(durations.longBreak / 60)
-  );
-
-  const handleSaveDurations = () => {
-    updateDurations({
-      focus: focusDuration * 60,
-      shortBreak: shortBreakDuration * 60,
-      longBreak: longBreakDuration * 60,
-    });
-    alert("✅ Timer durations saved!");
-  };
-
   const handleResetDefaults = () => {
     if (confirm("Reset all settings to defaults?")) {
-      setFocusDuration(25);
-      setShortBreakDuration(5);
-      setLongBreakDuration(15);
-      updateDurations({
-        focus: 1500,
-        shortBreak: 300,
-        longBreak: 900,
-      });
       updateSettings({
         autoStartBreak: false,
         autoStartFocus: false,
@@ -106,7 +76,9 @@ export default function SettingsPage() {
       });
       updateNotifications({
         enabled: true,
-        sound: "bell",
+        focusSound: "bell",
+        shortBreakSound: "chime",
+        longBreakSound: "ding",
         volume: 50,
       });
       alert("✅ Settings reset to defaults!");
@@ -143,77 +115,6 @@ export default function SettingsPage() {
       </div>
 
       <div className="space-y-6">
-        {/* Timer Durations */}
-        <Card className="p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">Timer Durations</h2>
-          </div>
-
-          <div className="space-y-4">
-            {/* Focus Duration */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-              <Label htmlFor="focus-duration">Focus Session</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="focus-duration"
-                  type="number"
-                  min="1"
-                  max="90"
-                  value={focusDuration}
-                  onChange={(e) =>
-                    setFocusDuration(parseInt(e.target.value) || 1)
-                  }
-                  className="w-24"
-                />
-                <span className="text-sm text-muted-foreground">minutes</span>
-              </div>
-            </div>
-
-            {/* Short Break Duration */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-              <Label htmlFor="short-break-duration">Short Break</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="short-break-duration"
-                  type="number"
-                  min="1"
-                  max="30"
-                  value={shortBreakDuration}
-                  onChange={(e) =>
-                    setShortBreakDuration(parseInt(e.target.value) || 1)
-                  }
-                  className="w-24"
-                />
-                <span className="text-sm text-muted-foreground">minutes</span>
-              </div>
-            </div>
-
-            {/* Long Break Duration */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-              <Label htmlFor="long-break-duration">Long Break</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="long-break-duration"
-                  type="number"
-                  min="1"
-                  max="60"
-                  value={longBreakDuration}
-                  onChange={(e) =>
-                    setLongBreakDuration(parseInt(e.target.value) || 1)
-                  }
-                  className="w-24"
-                />
-                <span className="text-sm text-muted-foreground">minutes</span>
-              </div>
-            </div>
-
-            <Button onClick={handleSaveDurations} className="w-full md:w-auto">
-              Save Timer Durations
-            </Button>
-          </div>
-        </Card>
-
         {/* Auto-Start */}
         <Card className="p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -308,44 +209,8 @@ export default function SettingsPage() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-              <Label htmlFor="notification-sound">Notification Sound</Label>
-              <Select
-                value={notifications.sound}
-                onValueChange={(value: any) =>
-                  updateNotifications({ sound: value })
-                }>
-                <SelectTrigger id="notification-sound">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="bell">Bell</SelectItem>
-                  <SelectItem value="chime">Chime</SelectItem>
-                  <SelectItem value="ding">Ding</SelectItem>
-                  <SelectItem value="none">None</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-              <Label htmlFor="notification-volume">Volume</Label>
-              <div className="flex items-center gap-2">
-                <Volume2 className="h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="notification-volume"
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={notifications.volume}
-                  onChange={(e) =>
-                    updateNotifications({ volume: parseInt(e.target.value) })
-                  }
-                  className="flex-1"
-                />
-                <span className="text-sm text-muted-foreground w-12">
-                  {notifications.volume}%
-                </span>
-              </div>
+            <div className="text-xs text-muted-foreground">
+              Notification sounds can be customized in Timer Settings
             </div>
           </div>
         </Card>

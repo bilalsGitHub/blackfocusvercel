@@ -45,7 +45,7 @@ export function TimerStats({ completedSessions, className }: TimerStatsProps) {
       className={cn("grid grid-cols-2 gap-4", className)}
       role="region"
       aria-label="Timer statistics">
-      <Card className="border-2">
+      <Card className="border-2 bg-card/50 backdrop-blur-sm">
         <CardContent className="p-6 text-center">
           <div
             className="text-4xl md:text-5xl font-bold text-primary tabular-nums"
@@ -59,7 +59,7 @@ export function TimerStats({ completedSessions, className }: TimerStatsProps) {
         </CardContent>
       </Card>
 
-      <Card className="border-2">
+      <Card className="border-2 bg-card/50 backdrop-blur-sm">
         <CardContent className="p-6 text-center">
           <div
             className="text-4xl md:text-5xl font-bold text-primary tabular-nums"

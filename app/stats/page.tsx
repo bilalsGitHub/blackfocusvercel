@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
+  BarChart3,
 } from "lucide-react";
 
 interface DailyStats {
@@ -257,11 +258,7 @@ export default function StatsPage() {
 
   // Debug: Log current day info
   React.useEffect(() => {
-    if (currentDay) {
-      console.log("Current Day:", currentDay.dateDisplay, currentDay.date);
-      console.log("Total Sessions:", currentDay.totalSessions);
-      console.log("Session Details Count:", currentDay.sessionDetails.length);
-    }
+    // Removed console logs for production
   }, [currentDay]);
 
   // Calculate stats for current day only
@@ -323,7 +320,7 @@ export default function StatsPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1">
-              📊 Daily Statistics
+              Daily Statistics
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground">
               Clear overview of your daily productivity
@@ -443,7 +440,9 @@ export default function StatsPage() {
         {/* Daily Breakdown */}
         {dailyStats.length === 0 ? (
           <Card className="p-8 sm:p-12 text-center">
-            <div className="text-4xl mb-4">📈</div>
+            <div className="flex justify-center mb-4">
+              <BarChart3 className="w-16 h-16 text-muted-foreground/50" />
+            </div>
             <h3 className="text-lg font-semibold mb-2">No stats yet</h3>
             <p className="text-sm text-muted-foreground">
               Complete your first session to see your statistics here

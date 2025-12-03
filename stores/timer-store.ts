@@ -24,18 +24,18 @@ interface TimerState {
   isActive: boolean;
   mode: TimerMode;
   chronometerElapsed: number;
-  
+
   // Durations (in seconds)
   durations: TimerDurations;
-  
+
   // Session tracking
   sessions: Session[];
   completedSessions: number; // Only completed focus sessions
   isLoading: boolean;
-  
+
   // Internal timer tracking
   lastTickTime: number | null;
-  
+
   // Actions
   toggleTimer: () => void;
   resetTimer: () => void;
@@ -70,323 +70,394 @@ function dbToSession(dbSession: any): Session {
 }
 
 export const useTimerStore = create<TimerState>()((set, get) => ({
-      // Initial state
-      timeLeft: DEFAULT_DURATIONS.focus,
+  // Initial state
+  timeLeft: DEFAULT_DURATIONS.focus,
+  isActive: false,
+  mode: "focus",
+  chronometerElapsed: 0,
+  durations: DEFAULT_DURATIONS,
+  sessions: [],
+  completedSessions: 0,
+  isLoading: false,
+  lastTickTime: null,
+
+  // Fetch sessions from backend
+  fetchSessions: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await fetch("/api/sessions");
+      if (!response.ok) throw new Error("Failed to fetch sessions");
+
+      const data = await response.json();
+      const sessions = data.map(dbToSession);
+      const completedSessions = sessions.filter(
+        (s: Session) => s.mode === "focus" && s.wasCompleted
+      ).length;
+
+      set({ sessions, completedSessions, isLoading: false });
+    } catch (error) {
+      console.error("Fetch sessions error:", error);
+      set({ isLoading: false });
+    }
+  },
+
+  // Toggle timer (start/pause)
+  toggleTimer: () => {
+    const state = get();
+    const newIsActive = !state.isActive;
+
+    set({
+      isActive: newIsActive,
+      lastTickTime: newIsActive ? Date.now() : null,
+    });
+  },
+
+  // Reset current timer
+  resetTimer: () => {
+    const state = get();
+    if (state.mode === "chronometer") {
+      set({
+        chronometerElapsed: 0,
+        timeLeft: 0,
+        isActive: false,
+        lastTickTime: null,
+      });
+      return;
+    }
+
+    const duration = state.durations[state.mode];
+
+    set({
+      timeLeft: duration,
       isActive: false,
-      mode: "focus",
-      chronometerElapsed: 0,
-      durations: DEFAULT_DURATIONS,
-      sessions: [],
-      completedSessions: 0,
-      isLoading: false,
       lastTickTime: null,
+    });
+  },
 
-      // Fetch sessions from backend
-      fetchSessions: async () => {
-        set({ isLoading: true });
-        try {
-          const response = await fetch("/api/sessions");
-          if (!response.ok) throw new Error("Failed to fetch sessions");
-          
-          const data = await response.json();
-          const sessions = data.map(dbToSession);
-          const completedSessions = sessions.filter(
-            (s: Session) => s.mode === "focus" && s.wasCompleted
-          ).length;
-          
-          set({ sessions, completedSessions, isLoading: false });
-        } catch (error) {
-          console.error("Fetch sessions error:", error);
-          set({ isLoading: false });
+  // Switch timer mode
+  switchMode: (mode) => {
+    const state = get();
+
+    if (mode === "chronometer") {
+      set({
+        mode: "chronometer",
+        timeLeft: 0,
+        chronometerElapsed: 0,
+        isActive: false,
+        lastTickTime: null,
+      });
+      return;
+    }
+
+    const duration = state.durations[mode];
+
+    set({
+      mode,
+      timeLeft: duration,
+      chronometerElapsed: 0,
+      isActive: false,
+      lastTickTime: null,
+    });
+  },
+
+  // Set time left manually
+  setTimeLeft: (time) => {
+    set({ timeLeft: time });
+  },
+
+  // Tick handler (called by RAF)
+  tick: () => {
+    const state = get();
+
+    if (!state.isActive) {
+      return;
+    }
+
+    const now = Date.now();
+    const elapsed = state.lastTickTime ? (now - state.lastTickTime) / 1000 : 0;
+
+    if (state.mode === "chronometer") {
+      set({
+        chronometerElapsed: state.chronometerElapsed + elapsed,
+        lastTickTime: now,
+      });
+      return;
+    }
+
+    if (state.timeLeft <= 0) {
+      set({
+        isActive: false,
+        lastTickTime: null,
+      });
+      return;
+    }
+
+    const newTimeLeft = Math.max(0, state.timeLeft - elapsed);
+
+    set({
+      timeLeft: newTimeLeft,
+      lastTickTime: now,
+    });
+
+    // Auto-complete when timer reaches 0
+    if (newTimeLeft === 0) {
+      get().completeTimer();
+    }
+  },
+
+  // Complete timer (called when timer reaches 0 or manually)
+  completeTimer: async () => {
+    const state = get();
+    const duration =
+      state.mode === "chronometer"
+        ? Math.round(state.chronometerElapsed)
+        : state.durations[state.mode];
+
+    if (state.mode === "chronometer" && duration <= 0) {
+      set({
+        isActive: false,
+        chronometerElapsed: 0,
+        lastTickTime: null,
+      });
+      return;
+    }
+
+    // Play notification sound BEFORE saving
+    if (typeof window !== "undefined") {
+      const { useSettingsStore } = await import("./settings-store");
+      const { getNotificationSoundPlayer } = await import(
+        "@/lib/notification-sounds"
+      );
+      const settings = useSettingsStore.getState();
+
+      if (settings.notifications.enabled) {
+        let soundType: "bell" | "chime" | "ding" | "none" = "bell";
+
+        switch (state.mode) {
+          case "focus":
+            soundType = settings.notifications.focusSound || "bell";
+            break;
+          case "shortBreak":
+            soundType = settings.notifications.shortBreakSound || "chime";
+            break;
+          case "longBreak":
+            soundType = settings.notifications.longBreakSound || "ding";
+            break;
+          default:
+            soundType = "bell";
         }
-      },
 
-      // Toggle timer (start/pause)
-      toggleTimer: () => {
-        const state = get();
-        const newIsActive = !state.isActive;
-        
-        set({
-          isActive: newIsActive,
-          lastTickTime: newIsActive ? Date.now() : null,
+        console.log("[TIMER] Playing completion sound:", {
+          mode: state.mode,
+          soundType,
+          volume: settings.notifications.volume,
         });
-      },
 
-      // Reset current timer
-      resetTimer: () => {
-        const state = get();
-        if (state.mode === "chronometer") {
-          set({
-            chronometerElapsed: 0,
-            timeLeft: 0,
-            isActive: false,
-            lastTickTime: null,
-          });
-          return;
+        if (soundType !== "none") {
+          const soundPlayer = getNotificationSoundPlayer();
+          soundPlayer.play(soundType, settings.notifications.volume / 100);
         }
 
-        const duration = state.durations[state.mode];
-        
-        set({
-          timeLeft: duration,
-          isActive: false,
-          lastTickTime: null,
-        });
-      },
+        // Show browser notification if permitted
+        if (
+          typeof Notification !== "undefined" &&
+          Notification.permission === "granted"
+        ) {
+          const titles = {
+            focus: "🎯 Focus session complete!",
+            shortBreak: "☕ Short break complete!",
+            longBreak: "🌟 Long break complete!",
+            chronometer: "⏱️ Chronometer session complete!",
+          };
 
-      // Switch timer mode
-      switchMode: (mode) => {
-        const state = get();
-        
-        if (mode === "chronometer") {
-          set({
-            mode: "chronometer",
-            timeLeft: 0,
-            chronometerElapsed: 0,
-            isActive: false,
-            lastTickTime: null,
+          const bodies = {
+            focus: "Great work! Time for a break.",
+            shortBreak: "Break's over. Ready to focus?",
+            longBreak: "Well rested! Let's get back to work.",
+            chronometer: "Session completed.",
+          };
+
+          new Notification(titles[state.mode], {
+            body: bodies[state.mode],
+            icon: "/icon-192x192.png",
+            badge: "/icon-192x192.png",
+            tag: "timer-complete",
+            requireInteraction: false,
           });
-          return;
         }
+      }
+    }
 
-        const duration = state.durations[mode];
-        
+    // Get active task ID from task store (only for focus mode)
+    let activeTaskId: string | undefined;
+    if (state.mode !== "chronometer" && typeof window !== "undefined") {
+      const { useTaskStore } = await import("./task-store");
+      activeTaskId = useTaskStore.getState().activeTaskId || undefined;
+    }
+
+    // Save session to backend
+    try {
+      const now = new Date().toISOString();
+      const startedAt = new Date(Date.now() - duration * 1000).toISOString();
+
+      const response = await fetch("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: state.mode,
+          duration,
+          startedAt,
+          completedAt: now,
+          wasCompleted: true,
+          taskId: activeTaskId, // This will be undefined for chronometer
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to save session");
+
+      const savedSession = dbToSession(await response.json());
+
+      const newCompletedSessions =
+        state.mode === "focus"
+          ? state.completedSessions + 1
+          : state.completedSessions;
+
+      set({
+        sessions: [savedSession, ...state.sessions],
+        completedSessions: newCompletedSessions,
+        isActive: false,
+        lastTickTime: null,
+      });
+
+      // Reset timer for next session
+      if (state.mode === "chronometer") {
         set({
-          mode,
-          timeLeft: duration,
           chronometerElapsed: 0,
-          isActive: false,
-          lastTickTime: null,
+          timeLeft: 0,
         });
-      },
-
-      // Set time left manually
-      setTimeLeft: (time) => {
-        set({ timeLeft: time });
-      },
-
-      // Tick handler (called by RAF)
-      tick: () => {
-        const state = get();
-        
-        if (!state.isActive) {
-          return;
-        }
-
-        const now = Date.now();
-        const elapsed = state.lastTickTime 
-          ? (now - state.lastTickTime) / 1000 
-          : 0;
-
-        if (state.mode === "chronometer") {
-          set({
-            chronometerElapsed: state.chronometerElapsed + elapsed,
-            lastTickTime: now,
-          });
-          return;
-        }
-
-        if (state.timeLeft <= 0) {
-          set({
-            isActive: false,
-            lastTickTime: null,
-          });
-          return;
-        }
-
-        const newTimeLeft = Math.max(0, state.timeLeft - elapsed);
-
+      } else {
         set({
-          timeLeft: newTimeLeft,
-          lastTickTime: now,
+          timeLeft: state.durations[state.mode],
         });
+      }
 
-        // Auto-complete when timer reaches 0
-        if (newTimeLeft === 0) {
-          get().completeTimer();
-        }
-      },
+      // Increment task's completed pomodoro if this was a focus session
+      if (
+        state.mode === "focus" &&
+        activeTaskId &&
+        typeof window !== "undefined"
+      ) {
+        console.log(
+          "[TIMER] Focus session completed, incrementing task pomodoro..."
+        );
+        const { useTaskStore } = await import("./task-store");
+        await useTaskStore.getState().incrementActiveTaskPomodoro();
+      } else if (state.mode === "focus") {
+        console.log("[TIMER] Focus session completed but no active task ID");
+      }
+    } catch (error) {
+      console.error("Complete timer error:", error);
+      set({
+        isActive: false,
+        lastTickTime: null,
+      });
+    }
+  },
 
-      // Complete timer (called when timer reaches 0 or manually)
-      completeTimer: async () => {
-        const state = get();
-        const duration =
-          state.mode === "chronometer"
-            ? Math.round(state.chronometerElapsed)
-            : state.durations[state.mode];
+  // Add session (for manual completion)
+  addSession: async (sessionData) => {
+    const state = get();
 
-        if (state.mode === "chronometer" && duration <= 0) {
-          set({
-            isActive: false,
-            chronometerElapsed: 0,
-            lastTickTime: null,
-          });
-          return;
-        }
+    try {
+      const now = new Date().toISOString();
+      const startedAt = new Date(
+        Date.now() - sessionData.duration * 1000
+      ).toISOString();
 
-        // Get active task ID from task store (only for focus mode)
-        let activeTaskId: string | undefined;
-        if (state.mode !== "chronometer" && typeof window !== "undefined") {
-          const { useTaskStore } = await import("./task-store");
-          activeTaskId = useTaskStore.getState().activeTaskId || undefined;
-        }
+      const response = await fetch("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: sessionData.mode,
+          duration: sessionData.duration,
+          startedAt,
+          completedAt: now,
+          wasCompleted: sessionData.wasCompleted,
+          taskId: sessionData.taskId,
+        }),
+      });
 
-        // Save session to backend
-        try {
-          const now = new Date().toISOString();
-          const startedAt = new Date(Date.now() - duration * 1000).toISOString();
-          
-          const response = await fetch("/api/sessions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              mode: state.mode,
-              duration,
-              startedAt,
-              completedAt: now,
-              wasCompleted: true,
-              taskId: activeTaskId, // This will be undefined for chronometer
-            }),
-          });
+      if (!response.ok) throw new Error("Failed to save session");
 
-          if (!response.ok) throw new Error("Failed to save session");
+      const savedSession = dbToSession(await response.json());
 
-          const savedSession = dbToSession(await response.json());
+      set({
+        sessions: [savedSession, ...state.sessions],
+        completedSessions:
+          sessionData.mode === "focus" && sessionData.wasCompleted
+            ? state.completedSessions + 1
+            : state.completedSessions,
+      });
+    } catch (error) {
+      console.error("Add session error:", error);
+      throw error;
+    }
+  },
 
-          const newCompletedSessions = 
-            state.mode === "focus" 
-              ? state.completedSessions + 1 
-              : state.completedSessions;
+  // Assign existing session to a task
+  assignSessionToTask: async (sessionId, taskId) => {
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId }),
+      });
 
-          set({
-            sessions: [savedSession, ...state.sessions],
-            completedSessions: newCompletedSessions,
-            isActive: false,
-            lastTickTime: null,
-          });
+      if (!response.ok) throw new Error("Failed to assign session");
 
-          // Reset timer for next session
-          if (state.mode === "chronometer") {
-            set({
-              chronometerElapsed: 0,
-              timeLeft: 0,
-            });
-          } else {
-            set({
-              timeLeft: state.durations[state.mode],
-            });
-          }
+      const updatedSession = dbToSession(await response.json());
 
-          // Increment task's completed pomodoro if this was a focus session
-          if (state.mode === "focus" && activeTaskId && typeof window !== "undefined") {
-            console.log("[TIMER] Focus session completed, incrementing task pomodoro...");
-            const { useTaskStore } = await import("./task-store");
-            await useTaskStore.getState().incrementActiveTaskPomodoro();
-          } else if (state.mode === "focus") {
-            console.log("[TIMER] Focus session completed but no active task ID");
-          }
-        } catch (error) {
-          console.error("Complete timer error:", error);
-          set({
-            isActive: false,
-            lastTickTime: null,
-          });
-        }
-      },
+      set({
+        sessions: get().sessions.map((s) =>
+          s.id === sessionId ? updatedSession : s
+        ),
+      });
+    } catch (error) {
+      console.error("Assign session error:", error);
+      throw error;
+    }
+  },
 
-      // Add session (for manual completion)
-      addSession: async (sessionData) => {
-        const state = get();
-        
-        try {
-          const now = new Date().toISOString();
-          const startedAt = new Date(Date.now() - sessionData.duration * 1000).toISOString();
-          
-          const response = await fetch("/api/sessions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              mode: sessionData.mode,
-              duration: sessionData.duration,
-              startedAt,
-              completedAt: now,
-              wasCompleted: sessionData.wasCompleted,
-              taskId: sessionData.taskId,
-            }),
-          });
+  // Update timer durations
+  updateDurations: (newDurations) => {
+    const state = get();
+    const updatedDurations = {
+      ...state.durations,
+      ...newDurations,
+    };
 
-          if (!response.ok) throw new Error("Failed to save session");
+    set({
+      durations: updatedDurations,
+      timeLeft: updatedDurations[state.mode] || state.timeLeft,
+    });
+  },
 
-          const savedSession = dbToSession(await response.json());
+  // Clear all sessions
+  clearSessions: async () => {
+    try {
+      // Delete all sessions from backend
+      await Promise.all(
+        get().sessions.map((session) =>
+          fetch(`/api/sessions/${session.id}`, { method: "DELETE" })
+        )
+      );
 
-          set({
-            sessions: [savedSession, ...state.sessions],
-            completedSessions:
-              sessionData.mode === "focus" && sessionData.wasCompleted
-                ? state.completedSessions + 1
-                : state.completedSessions,
-          });
-        } catch (error) {
-          console.error("Add session error:", error);
-          throw error;
-        }
-      },
-
-      // Assign existing session to a task
-      assignSessionToTask: async (sessionId, taskId) => {
-        try {
-          const response = await fetch(`/api/sessions/${sessionId}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ taskId }),
-          });
-
-          if (!response.ok) throw new Error("Failed to assign session");
-
-          const updatedSession = dbToSession(await response.json());
-
-          set({
-            sessions: get().sessions.map((s) =>
-              s.id === sessionId ? updatedSession : s
-            ),
-          });
-        } catch (error) {
-          console.error("Assign session error:", error);
-          throw error;
-        }
-      },
-
-      // Update timer durations
-      updateDurations: (newDurations) => {
-        const state = get();
-        const updatedDurations = {
-          ...state.durations,
-          ...newDurations,
-        };
-        
-        set({
-          durations: updatedDurations,
-          timeLeft: updatedDurations[state.mode] || state.timeLeft,
-        });
-      },
-
-      // Clear all sessions
-      clearSessions: async () => {
-        try {
-          // Delete all sessions from backend
-          await Promise.all(
-            get().sessions.map((session) =>
-              fetch(`/api/sessions/${session.id}`, { method: "DELETE" })
-            )
-          );
-
-          set({
-            sessions: [],
-            completedSessions: 0,
-          });
-        } catch (error) {
-          console.error("Clear sessions error:", error);
-        }
-      },
-    }));
-
+      set({
+        sessions: [],
+        completedSessions: 0,
+      });
+    } catch (error) {
+      console.error("Clear sessions error:", error);
+    }
+  },
+}));

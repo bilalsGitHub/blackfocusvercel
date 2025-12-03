@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Crown } from "lucide-react";
+import { Crown, BarChart3, Lightbulb, TestTube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ExportButton } from "@/components/analytics/export-button";
 import { ImportButton } from "@/components/analytics/import-button";
@@ -52,15 +52,7 @@ export default function AnalyticsPage() {
 
   // Debug stats
   React.useEffect(() => {
-    console.log("📈 Analytics Page Stats:", {
-      summaryStats,
-      sessionsCount: sessions.length,
-      sessions: sessions.slice(0, 5), // First 5 sessions
-      weeklyData: weeklyData.days.map((d) => ({
-        date: d.date,
-        sessions: d.sessions,
-      })),
-    });
+    // Removed console logs for production
   }, [summaryStats, sessions, weeklyData]);
 
   // TEST: Add dummy sessions
@@ -104,7 +96,9 @@ export default function AnalyticsPage() {
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-8 sm:py-16 space-y-4 sm:space-y-6">
-            <div className="text-4xl sm:text-6xl mb-2 sm:mb-4">📊</div>
+            <div className="flex justify-center mb-2 sm:mb-4">
+              <BarChart3 className="w-16 h-16 sm:w-24 sm:h-24 text-primary" />
+            </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
               Analytics Dashboard
             </h1>
@@ -155,8 +149,9 @@ export default function AnalyticsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2">
-              📊 Analytics Dashboard
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2 flex items-center gap-2 sm:gap-3">
+              <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
+              Analytics Dashboard
             </h1>
             <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
               Track your productivity patterns and focus trends over time
@@ -168,8 +163,10 @@ export default function AnalyticsPage() {
               <Button
                 onClick={handleAddTestSessions}
                 variant="outline"
-                size="sm">
-                🧪 Add Test Data
+                size="sm"
+                className="gap-2">
+                <TestTube className="w-4 h-4" />
+                Add Test Data
               </Button>
             )}
             <Button
@@ -216,7 +213,7 @@ export default function AnalyticsPage() {
         {/* Insights */}
         <div className="rounded-xl border bg-card p-4 sm:p-6 md:p-8">
           <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
-            <span>💡</span>
+            <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
             <span>Key Insights</span>
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">

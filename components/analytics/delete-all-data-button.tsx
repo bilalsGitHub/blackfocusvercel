@@ -93,8 +93,15 @@ export function DeleteAllDataButton() {
       useSettingsStore.setState({
         notifications: {
           enabled: true,
-          sound: "bell",
+          focusSound: "bell",
+          shortBreakSound: "chime",
+          longBreakSound: "ding",
           volume: 50,
+        },
+        timerDurations: {
+          focusMinutes: 25,
+          shortBreakMinutes: 5,
+          longBreakMinutes: 15,
         },
         autoStartBreak: false,
         autoStartFocus: false,
