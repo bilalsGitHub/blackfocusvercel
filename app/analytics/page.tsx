@@ -3,14 +3,28 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Crown, BarChart3, Lightbulb, TestTube } from "lucide-react";
+import {
+  Crown,
+  BarChart3,
+  Lightbulb,
+  TestTube,
+  MoreVertical,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ExportButton } from "@/components/analytics/export-button";
 import { ImportButton } from "@/components/analytics/import-button";
 import { DeleteAllDataButton } from "@/components/analytics/delete-all-data-button";
 import { UpgradeToProButton } from "@/components/upgrade-to-pro-button";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTimerStore } from "@/stores/timer-store";
+import { useTaskStore } from "@/stores/task-store";
 import { BubbleHeatmap } from "@/components/analytics/bubble-heatmap";
 import { StatsCards } from "@/components/analytics/stats-cards";
 import { StreakDisplay } from "@/components/analytics/streak-display";
@@ -64,29 +78,32 @@ export default function AnalyticsPage() {
     window.location.reload();
   };
 
+  // File input ref for import
+  const importInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Export button ref
+  const exportButtonRef = React.useRef<HTMLButtonElement>(null);
+
+  // Delete button ref
+  const deleteButtonRef = React.useRef<HTMLButtonElement>(null);
+
   // Transform summary stats for cards
   const statsCards = [
     {
-      label: "Sessions",
+      label: "Total Sessions",
       value: summaryStats.totalSessions,
-      change: summaryStats.weeklyGrowth,
-      trend: "up" as const,
     },
     {
-      label: "Tasks Done",
+      label: "Tasks Completed",
       value: summaryStats.completedTasks || 0,
-      suffix: "tasks",
     },
     {
-      label: "Hours",
+      label: "Focus Hours",
       value: summaryStats.totalHours,
-      change: 5,
-      trend: "up" as const,
     },
     {
-      label: "Days Active",
+      label: "Active Days",
       value: summaryStats.totalDays,
-      suffix: "days",
     },
   ];
 
@@ -157,36 +174,192 @@ export default function AnalyticsPage() {
               Track your productivity patterns and focus trends over time
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-            {/* TEST BUTTON */}
-            {sessions.length === 0 && (
-              <Button
-                onClick={handleAddTestSessions}
-                variant="outline"
-                size="sm"
-                className="gap-2">
-                <TestTube className="w-4 h-4" />
-                Add Test Data
-              </Button>
-            )}
-            <Button
-              onClick={() => router.push("/stats")}
-              variant="outline"
-              size="sm">
-              Daily Stats
-            </Button>
-            {!isPro && <UpgradeToProButton size="sm" />}
-            <DeleteAllDataButton />
-            <ImportButton />
-            <ExportButton />
+          <div className="flex items-center gap-2">
             {isPro && (
               <Badge
                 variant="secondary"
-                className="gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm">
-                <Crown className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500" />
+                className="gap-1.5 px-3 py-1.5 text-sm">
+                <Crown className="h-4 w-4 text-yellow-500" />
                 <span className="font-semibold">Pro</span>
               </Badge>
             )}
+
+            {/* Dropdown Menu for Actions */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <MoreVertical className="h-4 w-4" />
+                  <span className="hidden sm:inline">Menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => router.push("/stats")}>
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Daily Stats
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={() => importInputRef.current?.click()}>
+                  Import Data
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() => exportButtonRef.current?.click()}>
+                  Export Data
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={() => deleteButtonRef.current?.click()}
+                  className="text-destructive focus:text-destructive">
+                  Delete All Data
+                </DropdownMenuItem>
+
+                {sessions.length === 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleAddTestSessions}>
+                      <TestTube className="h-4 w-4 mr-2" />
+                      Add Test Data
+                    </DropdownMenuItem>
+                  </>
+                )}
+
+                {!isPro && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => router.push("/pricing")}>
+                      <Crown className="h-4 w-4 mr-2 text-yellow-500" />
+                      Upgrade to Pro
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Hidden components for functionality */}
+            <div className="hidden">
+              <input
+                ref={importInputRef}
+                type="file"
+                accept=".json"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+
+                  try {
+                    const text = await file.text();
+                    const data = JSON.parse(text);
+
+                    if (!data.version || !data.timer || !data.tasks) {
+                      throw new Error("Invalid backup file format");
+                    }
+
+                    const confirmed = window.confirm(
+                      `Import backup from ${new Date(
+                        data.exportDate
+                      ).toLocaleDateString()}?\n\n` +
+                        `This will replace your current data:\n` +
+                        `- ${data.timer.sessions.length} sessions\n` +
+                        `- ${data.tasks.tasks.length} tasks\n\n` +
+                        `Current data will be lost!`
+                    );
+
+                    if (!confirmed) return;
+
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const newestDate = new Date(
+                      Math.max(
+                        ...data.timer.sessions.map((s: any) =>
+                          new Date(s.completedAt).getTime()
+                        )
+                      )
+                    );
+                    const daysDiff = Math.ceil(
+                      (today.getTime() - newestDate.getTime()) /
+                        (1000 * 60 * 60 * 24)
+                    );
+
+                    const adjustedSessions = data.timer.sessions.map(
+                      (session: any) => {
+                        const sessionDate = new Date(session.completedAt);
+                        sessionDate.setDate(sessionDate.getDate() + daysDiff);
+                        return {
+                          ...session,
+                          completedAt: sessionDate.toISOString(),
+                        };
+                      }
+                    );
+
+                    useTimerStore.setState({
+                      sessions: adjustedSessions,
+                      completedSessions: data.timer.completedSessions,
+                      durations: data.timer.durations,
+                    });
+
+                    useTaskStore.setState({
+                      tasks: data.tasks.tasks,
+                      activeTaskId: data.tasks.activeTaskId,
+                    });
+
+                    alert("✅ Import successful!");
+                    window.location.reload();
+                  } catch (error) {
+                    console.error("Import error:", error);
+                    alert("❌ Import failed. Please check the file format.");
+                  }
+
+                  if (importInputRef.current) {
+                    importInputRef.current.value = "";
+                  }
+                }}
+              />
+              <button
+                ref={exportButtonRef}
+                onClick={() => {
+                  const timerState = useTimerStore.getState();
+                  const taskState = useTaskStore.getState();
+                  const data = {
+                    version: "1.0.0",
+                    exportDate: new Date().toISOString(),
+                    user: {
+                      email: user?.email,
+                      name: user?.name,
+                    },
+                    timer: {
+                      sessions: timerState.sessions,
+                      completedSessions: timerState.completedSessions,
+                      durations: timerState.durations,
+                    },
+                    tasks: {
+                      tasks: taskState.tasks,
+                      activeTaskId: taskState.activeTaskId,
+                    },
+                    stats: summaryStats,
+                  };
+
+                  const blob = new Blob([JSON.stringify(data, null, 2)], {
+                    type: "application/json",
+                  });
+
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `blackfocus-backup-${
+                    new Date().toISOString().split("T")[0]
+                  }.json`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }}
+              />
+              <DeleteAllDataButton ref={deleteButtonRef} />
+            </div>
           </div>
         </div>
 

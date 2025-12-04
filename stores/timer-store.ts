@@ -201,6 +201,7 @@ export const useTimerStore = create<TimerState>()((set, get) => ({
 
     // Auto-complete when timer reaches 0
     if (newTimeLeft === 0) {
+      console.log("[TIMER] Timer reached 0, calling completeTimer()");
       get().completeTimer();
     }
   },
@@ -322,24 +323,23 @@ export const useTimerStore = create<TimerState>()((set, get) => ({
           ? state.completedSessions + 1
           : state.completedSessions;
 
+      console.log("[TIMER] completeTimer finished, setting timeLeft to 0");
+
       set({
         sessions: [savedSession, ...state.sessions],
         completedSessions: newCompletedSessions,
         isActive: false,
         lastTickTime: null,
+        timeLeft: 0,
+        chronometerElapsed:
+          state.mode === "chronometer" ? 0 : state.chronometerElapsed,
       });
 
-      // Reset timer for next session
-      if (state.mode === "chronometer") {
-        set({
-          chronometerElapsed: 0,
-          timeLeft: 0,
-        });
-      } else {
-        set({
-          timeLeft: state.durations[state.mode],
-        });
-      }
+      console.log("[TIMER] State after complete:", {
+        timeLeft: get().timeLeft,
+        isActive: get().isActive,
+        mode: get().mode,
+      });
 
       // Increment task's completed pomodoro if this was a focus session
       if (
@@ -354,6 +354,60 @@ export const useTimerStore = create<TimerState>()((set, get) => ({
         await useTaskStore.getState().incrementActiveTaskPomodoro();
       } else if (state.mode === "focus") {
         console.log("[TIMER] Focus session completed but no active task ID");
+      }
+
+      // Auto-start next session if enabled
+      if (typeof window !== "undefined") {
+        const { useSettingsStore } = await import("./settings-store");
+        const settings = useSettingsStore.getState();
+
+        console.log("[TIMER] Checking auto-start settings:", {
+          currentMode: state.mode,
+          autoStartBreak: settings.autoStartBreak,
+          autoStartFocus: settings.autoStartFocus,
+          completedSessions: newCompletedSessions,
+          longBreakInterval: settings.longBreakInterval,
+        });
+
+        let shouldAutoStart = false;
+        let nextMode: TimerMode | null = null;
+
+        // After focus session → start break
+        if (state.mode === "focus" && settings.autoStartBreak) {
+          const shouldTakeLongBreak =
+            newCompletedSessions > 0 &&
+            newCompletedSessions % settings.longBreakInterval === 0;
+          nextMode = shouldTakeLongBreak ? "longBreak" : "shortBreak";
+          shouldAutoStart = true;
+          console.log("[TIMER] Focus completed, will start:", nextMode);
+        }
+        // After break → start focus
+        else if (
+          (state.mode === "shortBreak" || state.mode === "longBreak") &&
+          settings.autoStartFocus
+        ) {
+          nextMode = "focus";
+          shouldAutoStart = true;
+          console.log("[TIMER] Break completed, will start: focus");
+        }
+
+        if (shouldAutoStart && nextMode) {
+          console.log(`[TIMER] Auto-starting ${nextMode} in 1 second...`);
+          setTimeout(() => {
+            console.log(`[TIMER] Switching to ${nextMode}`);
+            get().switchMode(nextMode!);
+            setTimeout(() => {
+              console.log("[TIMER] Starting timer automatically");
+              get().toggleTimer();
+            }, 100);
+          }, 1000);
+        } else {
+          console.log("[TIMER] Auto-start not triggered:", {
+            shouldAutoStart,
+            nextMode,
+            reason: !shouldAutoStart ? "Settings disabled" : "No next mode",
+          });
+        }
       }
     } catch (error) {
       console.error("Complete timer error:", error);

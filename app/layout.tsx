@@ -163,7 +163,7 @@ export default function RootLayout({
           <FontProvider>
             <SpotifyPlayer />
             <BackgroundWrapper>
-              <div className="min-h-screen bg-background/65 text-foreground">
+              <div className="min-h-screen text-foreground">
                 <Header />
                 <main>{children}</main>
               </div>

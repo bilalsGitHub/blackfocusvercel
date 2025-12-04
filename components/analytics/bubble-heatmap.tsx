@@ -108,7 +108,11 @@ export function BubbleHeatmap({
   };
 
   return (
-    <div className={cn("relative", className)}>
+    <div
+      className={cn(
+        "relative rounded-xl border bg-card p-4 sm:p-6 md:p-8",
+        className
+      )}>
       {/* Header with Week Navigation */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-3">
@@ -193,7 +197,7 @@ export function BubbleHeatmap({
       </div>
 
       {/* Heatmap Grid */}
-      <div className="relative bg-card/80 backdrop-blur-sm border border-border rounded-xl p-6 shadow-sm">
+      <div className="relative bg-muted/20 rounded-xl p-6">
         {/* Hour labels (top) */}
         <div className="flex mb-4">
           <div className="w-16 flex items-center">

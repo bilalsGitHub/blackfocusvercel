@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -19,6 +20,10 @@ import {
   Settings,
   Crown,
   CalendarDays,
+  Menu,
+  X,
+  BarChart3,
+  DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
@@ -28,6 +33,7 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuthStore();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const handleLogout = async () => {
     try {
@@ -46,19 +52,37 @@ export function Header() {
     }
   };
 
+  // Close mobile menu when route changes
+  React.useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container max-w-7xl mx-auto flex h-16 items-center px-4 md:px-6">
+        {/* Mobile Menu Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mr-2 md:hidden"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </Button>
+
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center space-x-2 font-bold text-lg hover:text-primary transition-colors mr-8">
+          className="flex items-center space-x-2 font-bold text-lg hover:text-primary transition-colors mr-4 md:mr-8">
           <Timer className="h-5 w-5" />
-          <span>BlackFocus</span>
+          <span className="hidden sm:inline">BlackFocus</span>
         </Link>
 
-        {/* Navigation */}
-        <nav className="flex items-center gap-6 flex-1">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-6 flex-1">
           <Link
             href="/timer"
             className={cn(
@@ -108,7 +132,7 @@ export function Header() {
         </nav>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-3 ml-auto">
+        <div className="flex items-center gap-2 md:gap-3 ml-auto">
           {isAuthenticated && user ? (
             <>
               {/* User Menu */}
@@ -189,6 +213,86 @@ export function Header() {
           <ThemeToggle />
         </div>
       </div>
+
+      {/* Mobile Navigation Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t bg-background">
+          <nav className="container mx-auto px-4 py-4 flex flex-col space-y-3">
+            <Link
+              href="/timer"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                pathname === "/timer"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              )}>
+              <Timer className="h-4 w-4" />
+              Timer
+            </Link>
+            <Link
+              href="/stats"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                pathname === "/stats"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              )}>
+              <BarChart3 className="h-4 w-4" />
+              Stats
+            </Link>
+            <Link
+              href="/analytics"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                pathname === "/analytics"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              )}>
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+              {user?.isPro && (
+                <Crown className="h-3 w-3 text-yellow-500 ml-auto" />
+              )}
+            </Link>
+            <Link
+              href="/pricing"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                pathname === "/pricing"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              )}>
+              <DollarSign className="h-4 w-4" />
+              Pricing
+            </Link>
+            <Link
+              href="/calendar"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                pathname === "/calendar"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              )}>
+              <CalendarDays className="h-4 w-4" />
+              Calendar
+            </Link>
+
+            {/* Mobile Auth Section */}
+            {!isAuthenticated && (
+              <div className="pt-3 border-t space-y-2">
+                <Link href="/login" className="block">
+                  <Button variant="outline" className="w-full">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/register" className="block">
+                  <Button className="w-full">Sign up</Button>
+                </Link>
+              </div>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

@@ -20,7 +20,7 @@ export function BackgroundWrapper({ children }: BackgroundWrapperProps) {
     <div className="relative min-h-screen">
       {/* Background Image Layer (Pro only) */}
       {showBackground && (
-        <div 
+        <div
           className="fixed inset-0 z-0 pointer-events-none"
           style={{
             backgroundImage: `url(${background.imageUrl})`,
@@ -34,11 +34,16 @@ export function BackgroundWrapper({ children }: BackgroundWrapperProps) {
         />
       )}
 
+      {/* Background Color Layer - only when no image */}
+      {!showBackground && (
+        <div
+          className="fixed inset-0 z-0 bg-background pointer-events-none"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Content */}
-      <div className="relative z-10">
-        {children}
-      </div>
+      <div className="relative z-10">{children}</div>
     </div>
   );
 }
-
