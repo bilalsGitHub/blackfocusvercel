@@ -13,8 +13,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Clock, X } from "lucide-react";
+import { Clock, X, Trash2, AlertTriangle } from "lucide-react";
 import type { Session } from "@/stores/timer-store";
 
 export function UnassignedSessions() {
@@ -41,26 +49,40 @@ export function UnassignedSessions() {
   const [deletingSessionId, setDeletingSessionId] = React.useState<
     string | null
   >(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [sessionToDelete, setSessionToDelete] = React.useState<Session | null>(
+    null
+  );
 
-  const handleDeleteSession = async (sessionId: string) => {
-    if (!confirm("Are you sure you want to delete this session?")) return;
+  const handleDeleteClick = (session: Session) => {
+    setSessionToDelete(session);
+    setDeleteDialogOpen(true);
+  };
 
-    setDeletingSessionId(sessionId);
+  const handleConfirmDelete = async () => {
+    if (!sessionToDelete) return;
+
+    setDeletingSessionId(sessionToDelete.id);
+    setDeleteDialogOpen(false);
+
     try {
-      const response = await fetch(`/api/sessions/${sessionId}`, {
+      const response = await fetch(`/api/sessions/${sessionToDelete.id}`, {
         method: "DELETE",
       });
 
       if (!response.ok) throw new Error("Failed to delete session");
 
       // Remove from local state immediately
-      const updatedSessions = sessions.filter((s) => s.id !== sessionId);
+      const updatedSessions = sessions.filter(
+        (s) => s.id !== sessionToDelete.id
+      );
       useTimerStore.setState({ sessions: updatedSessions });
     } catch (error) {
       console.error("Error deleting session:", error);
       alert("Failed to delete session");
     } finally {
       setDeletingSessionId(null);
+      setSessionToDelete(null);
     }
   };
 
@@ -239,7 +261,7 @@ export function UnassignedSessions() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleDeleteSession(session.id)}
+                  onClick={() => handleDeleteClick(session)}
                   disabled={deletingSessionId === session.id}
                   className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10">
                   <X className="h-3.5 w-3.5" />
@@ -353,6 +375,70 @@ export function UnassignedSessions() {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Delete Session
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              Are you sure you want to delete this session? This action cannot
+              be undone.
+            </DialogDescription>
+          </DialogHeader>
+
+          {sessionToDelete && (
+            <div className="py-4">
+              <div className="p-3 rounded-lg bg-muted space-y-2">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {sessionToDelete.mode === "chronometer"
+                      ? `⏱ ${Math.max(
+                          1,
+                          Math.round(sessionToDelete.duration / 60)
+                        )}m`
+                      : `🍅 ${Math.round(sessionToDelete.duration / 60)}m`}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(sessionToDelete.completedAt).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                      }
+                    )}{" "}
+                    {new Date(sessionToDelete.completedAt).toLocaleTimeString(
+                      "en-US",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              className="gap-2">
+              <Trash2 className="h-4 w-4" />
+              Delete Session
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

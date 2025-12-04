@@ -61,8 +61,8 @@ export default function LandingPage() {
         <section className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             {/* Heading with SEO keywords */}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
-              <span className="block bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-tight md:leading-tight lg:leading-tight">
+              <span className="block bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent pb-2">
                 The Timer You've Been Looking For
               </span>
             </h1>
