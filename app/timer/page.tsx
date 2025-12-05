@@ -24,6 +24,8 @@ import { Card } from "@/components/ui/card";
 import { AdBanner } from "@/components/ads/ad-banner";
 import { FontSelector } from "@/components/ui/font-selector";
 import { AudioMixer } from "@/components/timer/audio-mixer";
+import { Button } from "@/components/ui/button";
+import { Maximize, Minimize } from "lucide-react";
 
 export default function TimerPage() {
   const {
@@ -48,6 +50,8 @@ export default function TimerPage() {
   // Sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const settingsDialogRef = React.useRef<SettingsDialogHandle>(null);
+  // Fullscreen state
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
 
   // Enable document title updates
   useDocumentTitle();
@@ -82,6 +86,31 @@ export default function TimerPage() {
   // Toggle Focus Mode handler
   const handleToggleFocusMode = React.useCallback(() => {
     setIsFocusMode((prev) => !prev);
+  }, []);
+
+  // Toggle Fullscreen handler
+  const handleToggleFullscreen = React.useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    }
+  }, []);
+
+  // Listen for fullscreen changes
+  React.useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
   }, []);
 
   // Keyboard shortcuts (including Focus Mode toggle with F key)
@@ -151,6 +180,22 @@ export default function TimerPage() {
             <div className="flex items-center justify-end gap-1 sm:gap-2">
               {isPro && <AudioMixer variant="inline" />}
               <FontSelector />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleToggleFullscreen}
+                className="h-9 w-9 rounded-lg hover:bg-muted"
+                title={
+                  isFullscreen
+                    ? "Exit Fullscreen (F11)"
+                    : "Enter Fullscreen (F11)"
+                }>
+                {isFullscreen ? (
+                  <Minimize className="h-5 w-5" />
+                ) : (
+                  <Maximize className="h-5 w-5" />
+                )}
+              </Button>
               <KeyboardShortcutsInfo />
               <SettingsDialog ref={settingsDialogRef} />
             </div>

@@ -56,6 +56,10 @@ export default function RootLayout({
         <meta name="author" content="BlackFocus" />
         <meta name="robots" content="index, follow" />
         <meta
+          name="google-site-verification"
+          content="6PMH-85JSqMyurwz53qUlYVHnE-WdNa_i-SHevPKJbE"
+        />
+        <meta
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
